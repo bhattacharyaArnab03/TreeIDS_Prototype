@@ -1,0 +1,14 @@
+{
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+      "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "args": [
+        "-NoExit",
+        "-Command",
+        "Set-Location 'D:/TreeIDS_Prototype'; & 'D:/TreeIDS_Prototype/.venv/Scripts/Activate.ps1'"
+      ]
+    }
+  },
+  "terminal.integrated.cwd": "D:/TreeIDS_Prototype"
+}

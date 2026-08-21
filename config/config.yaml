@@ -1,0 +1,46 @@
+dataset:
+  raw_dir: "data/raw"
+  active_day: "Friday_DDoS"  # Change this key anytime to switch datasets!
+
+  files:
+    # Single-file days
+    Monday: "Monday-WorkingHours.pcap_ISCX.csv"
+    Tuesday: "Tuesday-WorkingHours.pcap_ISCX.csv"
+    Wednesday: "Wednesday-workingHours.pcap_ISCX.csv"
+
+    # Thursday (Individual sessions or merged)
+    Thursday_WebAttacks: "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv"
+    Thursday_Infiltration: "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv"
+    Thursday_Combined:
+      - "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv"
+      - "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv"
+
+    # Friday (Individual sessions or merged)
+    Friday_Botnet: "Friday-WorkingHours-Morning.pcap_ISCX.csv"
+    Friday_PortScan: "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv"
+    Friday_DDoS: "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
+    Friday_Combined:
+      - "Friday-WorkingHours-Morning.pcap_ISCX.csv"
+      - "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv"
+      - "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
+
+  processed_tree_path: "data/processed/tree_index.json"
+  sample_size: 1000  # Samples 1000 rows across active selection
+
+tree_builder:
+  max_flows_per_leaf: 10
+  max_sessions_eval: 10
+  groupby_columns:
+    - "Source IP"
+    - "Destination IP"
+    - "Destination Port"
+
+llm:
+  provider: "cascade"
+  primary_model: "gemini-3.6-flash"
+  secondary_model: "gemini-2.0-flash"
+  fallback_to_mock: true
+  temperature: 0.1
+
+output:
+  results_path: "outputs/detection_results.json"

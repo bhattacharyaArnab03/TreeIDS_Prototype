@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# Environment
+.env
+
+# Data
+data/raw/
+
+# Logs and caches
+*.log
+.cache/

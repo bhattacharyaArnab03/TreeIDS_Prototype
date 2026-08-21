@@ -1,0 +1,102 @@
+[
+    {
+        "source_ip": "104.196.26.242",
+        "session": "192.168.10.15:59004",
+        "classification": "BENIGN",
+        "threat_type": "Normal Ephemeral Traffic",
+        "reasoning_path": [
+            "Root -> Inspected Host [104.196.26.242] with 1 flows"
+        ],
+        "explanation": "1. Evaluated a single flow with a short duration of 602.0 ms and minimal volume (2 forward packets) targeting ephemeral port 59004. 2. The low packet count and brief connection window lack indicators of volumetric flooding, brute-force attempts, or systematic port scanning. 3. Traffic characteristics are consistent with standard transient or ephemeral network communications."
+    },
+    {
+        "source_ip": "104.97.98.225",
+        "session": "192.168.10.17:60746",
+        "classification": "BENIGN",
+        "threat_type": "Normal Ephemeral Traffic",
+        "reasoning_path": [
+            "Root -> Inspected Host [104.97.98.225] with 1 flows"
+        ],
+        "explanation": "The session exhibits a very low forward packet count (2 packets) over a brief duration (99.0 ms) directed at an ephemeral port (60746). There are no indicators of volume flooding, persistent scanning, or unauthorized access attempts, pointing to standard transient network traffic."
+    },
+    {
+        "source_ip": "118.178.155.85",
+        "session": "192.168.10.16:52018",
+        "classification": "BENIGN",
+        "threat_type": "Normal Network Traffic",
+        "reasoning_path": [
+            "Root -> Inspected Host [118.178.155.85] with 1 flows"
+        ],
+        "explanation": "1. Observed a single flow targeting port 52018 with a brief duration of 279.0 ms. 2. Forward packet count is extremely low (2 packets), matching expected patterns for standard connection handshakes or routine network probes. 3. No attributes of volumetric flooding, brute force, or systematic scanning were detected."
+    },
+    {
+        "source_ip": "119.205.194.17",
+        "session": "192.168.10.12:58494",
+        "classification": "BENIGN",
+        "threat_type": "Normal Traffic",
+        "reasoning_path": [
+            "Root -> Inspected Host [119.205.194.17] with 1 flows"
+        ],
+        "explanation": "The session exhibits a single forward packet with a brief duration of 94.0 ms to an ephemeral port (58494). There is no evidence of high-frequency packet delivery, port sweeping, or persistent brute-force attempts. This behavior is consistent with standard network background communications or brief connection handshakes."
+    },
+    {
+        "source_ip": "151.101.1.108",
+        "session": "192.168.10.16:54192",
+        "classification": "BENIGN",
+        "threat_type": "Normal Network Interaction",
+        "reasoning_path": [
+            "Root -> Inspected Host [151.101.1.108] with 1 flows"
+        ],
+        "explanation": "1. Observed an isolated network session consisting of a single forward packet to high ephemeral port 54192.\n2. The flow duration is short (93.0 ms) with no aggregated flow accumulation or repeated connection attempts.\n3. The metrics do not exhibit patterns of volume-based flooding, port scanning sweeps, or brute-force authentication attempts."
+    },
+    {
+        "source_ip": "151.101.118.2",
+        "session": "192.168.10.17:40329",
+        "classification": "BENIGN",
+        "threat_type": "Normal Transient Traffic",
+        "reasoning_path": [
+            "Root -> Inspected Host [151.101.118.2] with 1 flows"
+        ],
+        "explanation": "Step 1: Evaluated session telemetry indicating a single flow with only 2 forward packets and a very short duration of 1.0 ms on dynamic port 40329. Step 2: Checked for malicious signatures like high-volume DDoS flooding, multi-port scanning, or repetitive brute-force attempts; none were present given the isolated flow count and low packet volume. Step 3: Concluded that the traffic represents normal, transient ephemeral network communication."
+    },
+    {
+        "source_ip": "151.101.193.34",
+        "session": "192.168.10.16:59648",
+        "classification": "BENIGN",
+        "threat_type": "Benign Traffic",
+        "reasoning_path": [
+            "Root -> Inspected Host [151.101.193.34] with 1 flows"
+        ],
+        "explanation": "The session telemetry shows an extremely short flow duration (3.0 ms) with only 2 forward packets directed at an ephemeral port (59648). There are no structural indicators of volumetric flooding, automated brute-forcing, or systematic port scanning."
+    },
+    {
+        "source_ip": "172.16.0.1",
+        "session": "192.168.10.14:8080",
+        "classification": "BENIGN",
+        "threat_type": "Normal Traffic",
+        "reasoning_path": [
+            "Root -> Inspected Host [172.16.0.1] with 580 flows"
+        ],
+        "explanation": "Traffic metrics fall within baseline operational thresholds."
+    },
+    {
+        "source_ip": "172.16.0.1",
+        "session": "192.168.10.50:80",
+        "classification": "MALICIOUS",
+        "threat_type": "DDoS / High-Volume Flooding",
+        "reasoning_path": [
+            "Root -> Inspected Host [172.16.0.1] with 580 flows"
+        ],
+        "explanation": "Abnormal forward packet count (2500) detected within short duration."
+    },
+    {
+        "source_ip": "172.217.10.1",
+        "session": "192.168.10.8:10043",
+        "classification": "BENIGN",
+        "threat_type": "Normal Traffic",
+        "reasoning_path": [
+            "Root -> Inspected Host [172.217.10.1] with 1 flows"
+        ],
+        "explanation": "Traffic metrics fall within baseline operational thresholds."
+    }
+]
