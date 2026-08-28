@@ -33,6 +33,7 @@ class TreeIDSDetector:
             print(f"[+] Tree index cached to {tree_path}")
 
         # Step 3: Run Vectorless Traversal
-        results = self.llm_engine.analyze_tree(tree_index)
+        active_day = self.config.get('dataset', {}).get('active_day', 'Default_Dataset')
+        results = self.llm_engine.analyze_tree(tree_index, dataset_name=active_day)
 
-        return results
+        return results

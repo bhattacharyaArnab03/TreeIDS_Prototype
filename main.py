@@ -32,10 +32,13 @@ def main():
     print("--- DEMO OUTPUT SAMPLE (Explainable Inferences) ---")
     for res in results[:3]:
         print(f"Host: {res['source_ip']} -> Session: {res['session']}")
-        print(f"Status: {res['classification']} | Threat: {res['threat_type']}")
-        print(f"Reasoning Path: {' -> '.join(res['reasoning_path'])}")
-        print(f"Explanation: {res['explanation']}")
+        print(f"Verdict: {res['classification']} (Confidence: {res.get('confidence', 'N/A')}) | Threat: {res['threat_type']}")
+        mitre = res.get('mitre_attack', {})
+        if isinstance(mitre, dict) and mitre.get('technique_id') and mitre.get('technique_id') != 'N/A':
+            print(f"MITRE ATT&CK: [{mitre.get('tactic')}] {mitre.get('technique_id')} - {mitre.get('technique_name')}")
+        print(f"Reasoning: {res['explanation']}")
+        print(f"Mitigation: {res.get('recommended_mitigation', 'N/A')}")
         print("-" * 50)
 
 if __name__ == "__main__":
-    main()
+    main()

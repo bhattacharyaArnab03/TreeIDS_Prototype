@@ -42,7 +42,11 @@ class TreeBuilder:
             session_groups = host_df.groupby([dst_col, port_col])
 
             for (dst_ip, dst_port), session_df in session_groups:
-                session_key = f"{dst_ip}:{dst_port}"
+                try:
+                    clean_port = int(float(dst_port))
+                except (ValueError, TypeError):
+                    clean_port = 0
+                session_key = f"{dst_ip}:{clean_port}"
 
                 # Calculate aggregated session metrics
                 flow_count = len(session_df)
@@ -54,7 +58,7 @@ class TreeBuilder:
 
                 host_node["sessions"][session_key] = {
                     "destination_ip": str(dst_ip),
-                    "destination_port": int(dst_port),
+                    "destination_port": clean_port,
                     "flow_count": flow_count,
                     "total_fwd_packets": total_fwd_pkts,
                     "avg_duration": round(avg_dur, 2),
@@ -65,6 +69,7 @@ class TreeBuilder:
 
         print(f"[+] Tree Index built successfully with {len(tree_index['hosts'])} unique Host nodes.")
         return tree_index
+
 
     def _find_column(self, df: pd.DataFrame, possible_names: list) -> str:
         """Helper method to match dataset columns against flexible list of headers."""

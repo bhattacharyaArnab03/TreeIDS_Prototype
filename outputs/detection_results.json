@@ -3,100 +3,170 @@
         "source_ip": "104.196.26.242",
         "session": "192.168.10.15:59004",
         "classification": "BENIGN",
-        "threat_type": "Normal Ephemeral Traffic",
+        "confidence": 0.95,
+        "threat_type": "Normal Benign Communication",
+        "mitre_attack": {
+            "tactic": "N/A - Benign Traffic",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
         "reasoning_path": [
             "Root -> Inspected Host [104.196.26.242] with 1 flows"
         ],
-        "explanation": "1. Evaluated a single flow with a short duration of 602.0 ms and minimal volume (2 forward packets) targeting ephemeral port 59004. 2. The low packet count and brief connection window lack indicators of volumetric flooding, brute-force attempts, or systematic port scanning. 3. Traffic characteristics are consistent with standard transient or ephemeral network communications."
+        "explanation": "1. Telemetry indicates single session inbound from public cloud IP (104.196.26.242) to internal host 192.168.10.15 on high ephemeral port 59004. 2. Low forward packet count (2) and flow duration of 602ms represent standard TCP handshake response or return payload traffic for an established outbound session. 3. Absence of flood patterns, repeated port hits, or abnormal traffic characteristics confirms non-threat status.",
+        "recommended_mitigation": "No remediation required. Maintain standard stateful firewall rules permitting established and related return connections."
     },
     {
         "source_ip": "104.97.98.225",
         "session": "192.168.10.17:60746",
         "classification": "BENIGN",
-        "threat_type": "Normal Ephemeral Traffic",
+        "confidence": 0.95,
+        "threat_type": "Benign Ephemeral Network Response",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
         "reasoning_path": [
             "Root -> Inspected Host [104.97.98.225] with 1 flows"
         ],
-        "explanation": "The session exhibits a very low forward packet count (2 packets) over a brief duration (99.0 ms) directed at an ephemeral port (60746). There are no indicators of volume flooding, persistent scanning, or unauthorized access attempts, pointing to standard transient network traffic."
+        "explanation": "Evaluated flow telemetry showing minimal packet volume (2 forward packets) over 99 ms directed to ephemeral target port 60746. Source IP (104.97.98.225) belongs to Akamai CDN infrastructure, consistent with standard inbound web response traffic to an internally initiated session.",
+        "recommended_mitigation": "No mitigation required. Maintain default stateful firewall filtering to permit established inbound return traffic."
     },
     {
         "source_ip": "118.178.155.85",
         "session": "192.168.10.16:52018",
         "classification": "BENIGN",
-        "threat_type": "Normal Network Traffic",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
         "reasoning_path": [
             "Root -> Inspected Host [118.178.155.85] with 1 flows"
         ],
-        "explanation": "1. Observed a single flow targeting port 52018 with a brief duration of 279.0 ms. 2. Forward packet count is extremely low (2 packets), matching expected patterns for standard connection handshakes or routine network probes. 3. No attributes of volumetric flooding, brute force, or systematic scanning were detected."
+        "explanation": "Traffic duration, packet rates, and port usage conform to expected baseline operational parameters.",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
     },
     {
         "source_ip": "119.205.194.17",
         "session": "192.168.10.12:58494",
         "classification": "BENIGN",
-        "threat_type": "Normal Traffic",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
         "reasoning_path": [
             "Root -> Inspected Host [119.205.194.17] with 1 flows"
         ],
-        "explanation": "The session exhibits a single forward packet with a brief duration of 94.0 ms to an ephemeral port (58494). There is no evidence of high-frequency packet delivery, port sweeping, or persistent brute-force attempts. This behavior is consistent with standard network background communications or brief connection handshakes."
+        "explanation": "Traffic duration, packet rates, and port usage conform to expected baseline operational parameters.",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
     },
     {
         "source_ip": "151.101.1.108",
         "session": "192.168.10.16:54192",
         "classification": "BENIGN",
-        "threat_type": "Normal Network Interaction",
+        "confidence": 0.95,
+        "threat_type": "Benign Web Response Traffic",
+        "mitre_attack": {
+            "tactic": "None",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
         "reasoning_path": [
             "Root -> Inspected Host [151.101.1.108] with 1 flows"
         ],
-        "explanation": "1. Observed an isolated network session consisting of a single forward packet to high ephemeral port 54192.\n2. The flow duration is short (93.0 ms) with no aggregated flow accumulation or repeated connection attempts.\n3. The metrics do not exhibit patterns of volume-based flooding, port scanning sweeps, or brute-force authentication attempts."
+        "explanation": "The flow consists of a single packet sent from a public CDN IP (151.101.1.108 - Fastly) to an internal host on an ephemeral port (54192) with a duration of 93.0 ms. This pattern is characteristic of legitimate web server response traffic returning to a client session rather than an attack vector.",
+        "recommended_mitigation": "No action required. Maintain baseline network monitoring and standard stateful firewall rules."
     },
     {
         "source_ip": "151.101.118.2",
         "session": "192.168.10.17:40329",
         "classification": "BENIGN",
-        "threat_type": "Normal Transient Traffic",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
         "reasoning_path": [
             "Root -> Inspected Host [151.101.118.2] with 1 flows"
         ],
-        "explanation": "Step 1: Evaluated session telemetry indicating a single flow with only 2 forward packets and a very short duration of 1.0 ms on dynamic port 40329. Step 2: Checked for malicious signatures like high-volume DDoS flooding, multi-port scanning, or repetitive brute-force attempts; none were present given the isolated flow count and low packet volume. Step 3: Concluded that the traffic represents normal, transient ephemeral network communication."
+        "explanation": "Traffic duration, packet rates, and port usage conform to expected baseline operational parameters.",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
     },
     {
         "source_ip": "151.101.193.34",
         "session": "192.168.10.16:59648",
         "classification": "BENIGN",
-        "threat_type": "Benign Traffic",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
         "reasoning_path": [
             "Root -> Inspected Host [151.101.193.34] with 1 flows"
         ],
-        "explanation": "The session telemetry shows an extremely short flow duration (3.0 ms) with only 2 forward packets directed at an ephemeral port (59648). There are no structural indicators of volumetric flooding, automated brute-forcing, or systematic port scanning."
+        "explanation": "Traffic duration, packet rates, and port usage conform to expected baseline operational parameters.",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
     },
     {
         "source_ip": "172.16.0.1",
         "session": "192.168.10.14:8080",
         "classification": "BENIGN",
-        "threat_type": "Normal Traffic",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
         "reasoning_path": [
             "Root -> Inspected Host [172.16.0.1] with 580 flows"
         ],
-        "explanation": "Traffic metrics fall within baseline operational thresholds."
+        "explanation": "Traffic duration, packet rates, and port usage conform to expected baseline operational parameters.",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
     },
     {
         "source_ip": "172.16.0.1",
         "session": "192.168.10.50:80",
         "classification": "MALICIOUS",
-        "threat_type": "DDoS / High-Volume Flooding",
+        "confidence": 0.95,
+        "threat_type": "Application Denial of Service (Slowloris / Low-and-Slow HTTP)",
+        "mitre_attack": {
+            "tactic": "Impact",
+            "technique_id": "T1499.002",
+            "technique_name": "Endpoint Denial of Service: Application Exhaustion"
+        },
         "reasoning_path": [
             "Root -> Inspected Host [172.16.0.1] with 580 flows"
         ],
-        "explanation": "Abnormal forward packet count (2500) detected within short duration."
+        "explanation": "Analysis shows 579 aggregated flows to target IP 192.168.10.50 on HTTP port 80 with an abnormally high average flow duration (~13,649 seconds or ~3.8 hours) and low packet counts (~4.3 forward packets per flow). This structural profile of keeping HTTP connections open for extended durations with minimal data transmission is characteristic of a low-and-slow application layer Denial of Service attack (e.g., Slowloris) designed to exhaust web server connection pools.",
+        "recommended_mitigation": "Configure web server connection timeouts (e.g., client_body_timeout and keepalive_timeout in NGINX, or mod_reqtimeout in Apache), limit maximum concurrent connections per source IP, and deploy a WAF rate-limiting rule targeting source IP 172.16.0.1."
     },
     {
         "source_ip": "172.217.10.1",
         "session": "192.168.10.8:10043",
         "classification": "BENIGN",
-        "threat_type": "Normal Traffic",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
         "reasoning_path": [
             "Root -> Inspected Host [172.217.10.1] with 1 flows"
         ],
-        "explanation": "Traffic metrics fall within baseline operational thresholds."
+        "explanation": "Traffic duration, packet rates, and port usage conform to expected baseline operational parameters.",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
     }
 ]

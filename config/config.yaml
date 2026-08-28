@@ -1,6 +1,6 @@
 dataset:
   raw_dir: "data/raw"
-  active_day: "Friday_DDoS"  # Change this key anytime to switch datasets!
+  active_day: "Friday_DDoS"  # Options: Monday, Tuesday, Wednesday, Thursday_WebAttacks, Thursday_Infiltration, Friday_PortScan, Friday_Botnet, Friday_DDoS, Friday_Combined, etc.
 
   files:
     # Single-file days
@@ -25,7 +25,7 @@ dataset:
       - "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
 
   processed_tree_path: "data/processed/tree_index.json"
-  sample_size: 1000  # Samples 1000 rows across active selection
+  sample_size: 1000  # Representative sampling across active day
 
 tree_builder:
   max_flows_per_leaf: 10
@@ -38,9 +38,11 @@ tree_builder:
 llm:
   provider: "cascade"
   primary_model: "gemini-3.6-flash"
-  secondary_model: "gemini-2.0-flash"
+  secondary_model: "gemini-flash-latest"
   fallback_to_mock: true
   temperature: 0.1
 
 output:
   results_path: "outputs/detection_results.json"
+  audit_log_path: "outputs/classification_audit.log"
+  audit_jsonl_path: "outputs/audit_log.jsonl"

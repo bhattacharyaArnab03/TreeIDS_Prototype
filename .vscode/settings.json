@@ -4,11 +4,23 @@
     "PowerShell": {
       "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
       "args": [
+        "-ExecutionPolicy",
+        "Bypass",
         "-NoExit",
         "-Command",
-        "Set-Location 'D:/TreeIDS_Prototype'; & 'D:/TreeIDS_Prototype/.venv/Scripts/Activate.ps1'"
+        "& '${workspaceFolder}/.venv/Scripts/Activate.ps1'"
+      ]
+    },
+    "Command Prompt": {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "args": [
+        "/k",
+        "${workspaceFolder}\\.venv\\Scripts\\activate.bat"
       ]
     }
   },
-  "terminal.integrated.cwd": "D:/TreeIDS_Prototype"
+  "terminal.integrated.cwd": "${workspaceFolder}",
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "python.terminal.activateEnvironment": true
 }
+

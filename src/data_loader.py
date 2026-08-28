@@ -9,6 +9,18 @@ class DataLoader:
     def __init__(self, config: dict):
         self.config = config
 
+    def _read_csv_safe(self, file_path: str) -> pd.DataFrame:
+        """Reads CSV files handling UTF-8, Latin-1, and corrupted byte encodings robustly."""
+        for enc in ["utf-8", "latin1", "cp1252", "iso-8859-1"]:
+            try:
+                return pd.read_csv(file_path, encoding=enc, encoding_errors="replace", low_memory=False)
+            except UnicodeDecodeError:
+                continue
+            except Exception as e:
+                # If engine error, fallback to python engine
+                return pd.read_csv(file_path, encoding="latin1", engine="python", encoding_errors="replace")
+        return pd.read_csv(file_path, encoding="latin1", encoding_errors="replace", low_memory=False)
+
     def fetch_dataset(self) -> pd.DataFrame:
         ds_cfg = self.config.get('dataset', {})
         raw_dir = ds_cfg.get('raw_dir', 'data/raw')
@@ -33,7 +45,7 @@ class DataLoader:
                     if not os.path.exists(file_path):
                         raise FileNotFoundError(f"Dataset file not found: {file_path}")
 
-                    df_full = pd.read_csv(file_path)
+                    df_full = self._read_csv_safe(file_path)
                     if per_file_sample and len(df_full) > per_file_sample:
                         df_part = df_full.sample(n=per_file_sample, random_state=42)
                     else:
@@ -51,7 +63,7 @@ class DataLoader:
                 if not os.path.exists(file_path):
                     raise FileNotFoundError(f"Dataset file not found: {file_path}")
 
-                df_full = pd.read_csv(file_path)
+                df_full = self._read_csv_safe(file_path)
                 if sample_size and len(df_full) > sample_size:
                     df = df_full.sample(n=sample_size, random_state=42).reset_index(drop=True)
                     print(f"[+] Sampled {len(df)} representative rows randomly across full dataset.")
@@ -64,7 +76,7 @@ class DataLoader:
             if not os.path.exists(raw_path):
                 raise FileNotFoundError(f"Dataset file not found at: {raw_path}")
             
-            df_full = pd.read_csv(raw_path)
+            df_full = self._read_csv_safe(raw_path)
             if sample_size and len(df_full) > sample_size:
                 df = df_full.sample(n=sample_size, random_state=42).reset_index(drop=True)
             else:
@@ -72,4 +84,4 @@ class DataLoader:
 
         # Clean column names (strip trailing whitespace common in CIC-IDS2017)
         df.columns = df.columns.str.strip()
-        return df
+        return df
