@@ -16,12 +16,12 @@ class TreeBuilder:
         # Read parameters from config.yaml
         max_flows = self.tree_cfg.get("max_flows_per_leaf", 10)
         
-        # Flexibly locate target column names in stripped CIC-IDS2017 DataFrame
-        src_col = self._find_column(df, ["Source IP", "Src IP", "source_ip"])
-        dst_col = self._find_column(df, ["Destination IP", "Dst IP", "destination_ip"])
-        port_col = self._find_column(df, ["Destination Port", "Dst Port", "destination_port"])
-        pkt_col = self._find_column(df, ["Total Fwd Packets", "Total Fwd Packet", "total_fwd_packets"])
-        dur_col = self._find_column(df, ["Flow Duration", "flow_duration", "dur"])
+        # Locate canonical or raw column names in telemetry DataFrame
+        src_col = self._find_column(df, ["src_ip", "Source IP", "Src IP", "source_ip", "srcip"])
+        dst_col = self._find_column(df, ["dst_ip", "Destination IP", "Dst IP", "destination_ip", "dstip"])
+        port_col = self._find_column(df, ["dst_port", "Destination Port", "Dst Port", "destination_port", "dsport"])
+        pkt_col = self._find_column(df, ["total_fwd_packets", "Total Fwd Packets", "Total Fwd Packet", "spkts"])
+        dur_col = self._find_column(df, ["flow_duration_ms", "Flow Duration", "flow_duration", "dur"])
 
         tree_index = {
             "root": "Network_Flow_Index",

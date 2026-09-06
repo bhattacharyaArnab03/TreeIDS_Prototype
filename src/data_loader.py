@@ -1,13 +1,17 @@
 import os
 import pandas as pd
+from typing import Tuple, Optional
+from src.schema_adapter import SchemaNormalizer
 
 class DataLoader:
     """
     Ingests raw network telemetry CSV datasets with support for single files,
-    multi-file days, and representative dataset sampling across full time windows.
+    multi-file days, schema normalization (CIC-IDS2017 & UNSW-NB15), and
+    strict zero-shot ground-truth label isolation.
     """
     def __init__(self, config: dict):
         self.config = config
+        self.last_ground_truth: Optional[pd.Series] = None
 
     def _read_csv_safe(self, file_path: str) -> pd.DataFrame:
         """Reads CSV files handling UTF-8, Latin-1, and corrupted byte encodings robustly."""
@@ -25,6 +29,7 @@ class DataLoader:
         ds_cfg = self.config.get('dataset', {})
         raw_dir = ds_cfg.get('raw_dir', 'data/raw')
         sample_size = ds_cfg.get('sample_size')
+        dataset_type = ds_cfg.get('dataset_type', 'auto')
 
         if 'active_day' in ds_cfg and 'files' in ds_cfg:
             active_key = ds_cfg['active_day']
@@ -82,6 +87,8 @@ class DataLoader:
             else:
                 df = df_full
 
-        # Clean column names (strip trailing whitespace common in CIC-IDS2017)
-        df.columns = df.columns.str.strip()
-        return df
+        # Execute Unified Schema Normalization and Ground-Truth Isolation
+        canonical_df, ground_truth = SchemaNormalizer.normalize(df, dataset_type=dataset_type)
+        self.last_ground_truth = ground_truth
+        print(f"[+] Schema Normalizer applied ({len(canonical_df)} flows canonicalized, ground-truth isolated).")
+        return canonical_df

@@ -1,5 +1,9 @@
+pipeline:
+  mode: "batch"  # Options: "batch" (telemetry CSV ingestion) | "live" (Scapy real-time streaming)
+
 dataset:
   raw_dir: "data/raw"
+  dataset_type: "auto"  # Options: "auto", "cic_ids2017", "unsw_nb15", "generic"
   active_day: "Friday_DDoS"  # Options: Monday, Tuesday, Wednesday, Thursday_WebAttacks, Thursday_Infiltration, Friday_PortScan, Friday_Botnet, Friday_DDoS, Friday_Combined, etc.
 
   files:
@@ -27,13 +31,20 @@ dataset:
   processed_tree_path: "data/processed/tree_index.json"
   sample_size: 1000  # Representative sampling across active day
 
+live_capture:
+  interface: null  # null = default system interface
+  bpf_filter: "ip and (tcp or udp or icmp)"
+  window_duration_sec: 10.0
+  flow_timeout_sec: 30.0
+  max_queue_size: 10000
+
 tree_builder:
   max_flows_per_leaf: 10
   max_sessions_eval: 10
   groupby_columns:
-    - "Source IP"
-    - "Destination IP"
-    - "Destination Port"
+    - "src_ip"
+    - "dst_ip"
+    - "dst_port"
 
 llm:
   provider: "cascade"
@@ -45,4 +56,5 @@ llm:
 output:
   results_path: "outputs/detection_results.json"
   audit_log_path: "outputs/classification_audit.log"
-  audit_jsonl_path: "outputs/audit_log.jsonl"
+  audit_jsonl_path: "outputs/audit_log.jsonl"
+

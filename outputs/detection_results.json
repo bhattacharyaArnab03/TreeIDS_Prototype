@@ -1,41 +1,7 @@
 [
     {
-        "source_ip": "104.196.26.242",
-        "session": "192.168.10.15:59004",
-        "classification": "BENIGN",
-        "confidence": 0.95,
-        "threat_type": "Normal Benign Communication",
-        "mitre_attack": {
-            "tactic": "N/A - Benign Traffic",
-            "technique_id": "N/A",
-            "technique_name": "N/A"
-        },
-        "reasoning_path": [
-            "Root -> Inspected Host [104.196.26.242] with 1 flows"
-        ],
-        "explanation": "1. Telemetry indicates single session inbound from public cloud IP (104.196.26.242) to internal host 192.168.10.15 on high ephemeral port 59004. 2. Low forward packet count (2) and flow duration of 602ms represent standard TCP handshake response or return payload traffic for an established outbound session. 3. Absence of flood patterns, repeated port hits, or abnormal traffic characteristics confirms non-threat status.",
-        "recommended_mitigation": "No remediation required. Maintain standard stateful firewall rules permitting established and related return connections."
-    },
-    {
-        "source_ip": "104.97.98.225",
-        "session": "192.168.10.17:60746",
-        "classification": "BENIGN",
-        "confidence": 0.95,
-        "threat_type": "Benign Ephemeral Network Response",
-        "mitre_attack": {
-            "tactic": "N/A",
-            "technique_id": "N/A",
-            "technique_name": "N/A"
-        },
-        "reasoning_path": [
-            "Root -> Inspected Host [104.97.98.225] with 1 flows"
-        ],
-        "explanation": "Evaluated flow telemetry showing minimal packet volume (2 forward packets) over 99 ms directed to ephemeral target port 60746. Source IP (104.97.98.225) belongs to Akamai CDN infrastructure, consistent with standard inbound web response traffic to an internally initiated session.",
-        "recommended_mitigation": "No mitigation required. Maintain default stateful firewall filtering to permit established inbound return traffic."
-    },
-    {
-        "source_ip": "118.178.155.85",
-        "session": "192.168.10.16:52018",
+        "source_ip": "104.16.25.216",
+        "session": "192.168.10.16:56098",
         "classification": "BENIGN",
         "confidence": 0.98,
         "threat_type": "Normal Network Communication",
@@ -45,14 +11,14 @@
             "technique_name": "N/A"
         },
         "reasoning_path": [
-            "Root -> Inspected Host [118.178.155.85] with 1 flows"
+            "Root -> Inspected Host [104.16.25.216] with 1 flows"
         ],
         "explanation": "Traffic duration, packet rates, and port usage conform to expected baseline operational parameters.",
         "recommended_mitigation": "No action required. Maintain baseline logging."
     },
     {
-        "source_ip": "119.205.194.17",
-        "session": "192.168.10.12:58494",
+        "source_ip": "104.16.25.235",
+        "session": "192.168.10.5:49428",
         "classification": "BENIGN",
         "confidence": 0.98,
         "threat_type": "Normal Network Communication",
@@ -62,31 +28,14 @@
             "technique_name": "N/A"
         },
         "reasoning_path": [
-            "Root -> Inspected Host [119.205.194.17] with 1 flows"
+            "Root -> Inspected Host [104.16.25.235] with 1 flows"
         ],
         "explanation": "Traffic duration, packet rates, and port usage conform to expected baseline operational parameters.",
         "recommended_mitigation": "No action required. Maintain baseline logging."
     },
     {
-        "source_ip": "151.101.1.108",
-        "session": "192.168.10.16:54192",
-        "classification": "BENIGN",
-        "confidence": 0.95,
-        "threat_type": "Benign Web Response Traffic",
-        "mitre_attack": {
-            "tactic": "None",
-            "technique_id": "N/A",
-            "technique_name": "N/A"
-        },
-        "reasoning_path": [
-            "Root -> Inspected Host [151.101.1.108] with 1 flows"
-        ],
-        "explanation": "The flow consists of a single packet sent from a public CDN IP (151.101.1.108 - Fastly) to an internal host on an ephemeral port (54192) with a duration of 93.0 ms. This pattern is characteristic of legitimate web server response traffic returning to a client session rather than an attack vector.",
-        "recommended_mitigation": "No action required. Maintain baseline network monitoring and standard stateful firewall rules."
-    },
-    {
-        "source_ip": "151.101.118.2",
-        "session": "192.168.10.17:40329",
+        "source_ip": "104.19.196.102",
+        "session": "192.168.10.8:60775",
         "classification": "BENIGN",
         "confidence": 0.98,
         "threat_type": "Normal Network Communication",
@@ -96,14 +45,14 @@
             "technique_name": "N/A"
         },
         "reasoning_path": [
-            "Root -> Inspected Host [151.101.118.2] with 1 flows"
+            "Root -> Inspected Host [104.19.196.102] with 1 flows"
         ],
         "explanation": "Traffic duration, packet rates, and port usage conform to expected baseline operational parameters.",
         "recommended_mitigation": "No action required. Maintain baseline logging."
     },
     {
-        "source_ip": "151.101.193.34",
-        "session": "192.168.10.16:59648",
+        "source_ip": "104.23.141.18",
+        "session": "192.168.10.15:56900",
         "classification": "BENIGN",
         "confidence": 0.98,
         "threat_type": "Normal Network Communication",
@@ -113,14 +62,14 @@
             "technique_name": "N/A"
         },
         "reasoning_path": [
-            "Root -> Inspected Host [151.101.193.34] with 1 flows"
+            "Root -> Inspected Host [104.23.141.18] with 1 flows"
         ],
         "explanation": "Traffic duration, packet rates, and port usage conform to expected baseline operational parameters.",
         "recommended_mitigation": "No action required. Maintain baseline logging."
     },
     {
-        "source_ip": "172.16.0.1",
-        "session": "192.168.10.14:8080",
+        "source_ip": "104.31.1.178",
+        "session": "192.168.10.14:58613",
         "classification": "BENIGN",
         "confidence": 0.98,
         "threat_type": "Normal Network Communication",
@@ -130,31 +79,14 @@
             "technique_name": "N/A"
         },
         "reasoning_path": [
-            "Root -> Inspected Host [172.16.0.1] with 580 flows"
+            "Root -> Inspected Host [104.31.1.178] with 1 flows"
         ],
         "explanation": "Traffic duration, packet rates, and port usage conform to expected baseline operational parameters.",
         "recommended_mitigation": "No action required. Maintain baseline logging."
     },
     {
-        "source_ip": "172.16.0.1",
-        "session": "192.168.10.50:80",
-        "classification": "MALICIOUS",
-        "confidence": 0.95,
-        "threat_type": "Application Denial of Service (Slowloris / Low-and-Slow HTTP)",
-        "mitre_attack": {
-            "tactic": "Impact",
-            "technique_id": "T1499.002",
-            "technique_name": "Endpoint Denial of Service: Application Exhaustion"
-        },
-        "reasoning_path": [
-            "Root -> Inspected Host [172.16.0.1] with 580 flows"
-        ],
-        "explanation": "Analysis shows 579 aggregated flows to target IP 192.168.10.50 on HTTP port 80 with an abnormally high average flow duration (~13,649 seconds or ~3.8 hours) and low packet counts (~4.3 forward packets per flow). This structural profile of keeping HTTP connections open for extended durations with minimal data transmission is characteristic of a low-and-slow application layer Denial of Service attack (e.g., Slowloris) designed to exhaust web server connection pools.",
-        "recommended_mitigation": "Configure web server connection timeouts (e.g., client_body_timeout and keepalive_timeout in NGINX, or mod_reqtimeout in Apache), limit maximum concurrent connections per source IP, and deploy a WAF rate-limiting rule targeting source IP 172.16.0.1."
-    },
-    {
-        "source_ip": "172.217.10.1",
-        "session": "192.168.10.8:10043",
+        "source_ip": "104.88.19.52",
+        "session": "192.168.10.12:49286",
         "classification": "BENIGN",
         "confidence": 0.98,
         "threat_type": "Normal Network Communication",
@@ -164,7 +96,75 @@
             "technique_name": "N/A"
         },
         "reasoning_path": [
-            "Root -> Inspected Host [172.217.10.1] with 1 flows"
+            "Root -> Inspected Host [104.88.19.52] with 1 flows"
+        ],
+        "explanation": "Traffic duration, packet rates, and port usage conform to expected baseline operational parameters.",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
+    },
+    {
+        "source_ip": "104.88.6.95",
+        "session": "192.168.10.15:56133",
+        "classification": "BENIGN",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
+        "reasoning_path": [
+            "Root -> Inspected Host [104.88.6.95] with 1 flows"
+        ],
+        "explanation": "Traffic duration, packet rates, and port usage conform to expected baseline operational parameters.",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
+    },
+    {
+        "source_ip": "104.88.89.135",
+        "session": "192.168.10.5:54311",
+        "classification": "BENIGN",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
+        "reasoning_path": [
+            "Root -> Inspected Host [104.88.89.135] with 2 flows"
+        ],
+        "explanation": "Traffic duration, packet rates, and port usage conform to expected baseline operational parameters.",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
+    },
+    {
+        "source_ip": "104.88.89.135",
+        "session": "192.168.10.9:18072",
+        "classification": "BENIGN",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
+        "reasoning_path": [
+            "Root -> Inspected Host [104.88.89.135] with 2 flows"
+        ],
+        "explanation": "Traffic duration, packet rates, and port usage conform to expected baseline operational parameters.",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
+    },
+    {
+        "source_ip": "104.97.74.119",
+        "session": "192.168.10.5:51033",
+        "classification": "BENIGN",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
+        "reasoning_path": [
+            "Root -> Inspected Host [104.97.74.119] with 1 flows"
         ],
         "explanation": "Traffic duration, packet rates, and port usage conform to expected baseline operational parameters.",
         "recommended_mitigation": "No action required. Maintain baseline logging."
