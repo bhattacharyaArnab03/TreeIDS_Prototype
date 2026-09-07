@@ -159,10 +159,10 @@ class TreeIDSReasoningEngine:
         use_mock = llm_cfg.get('fallback_to_mock', True)
         temp = llm_cfg.get('temperature', 0.1)
 
-        gen_config = {
-            "response_mime_type": "application/json",
-            "temperature": temp
-        }
+        gen_config = genai.GenerationConfig(
+            response_mime_type="application/json",
+            temperature=temp
+        )
 
         # If provider is explicitly set to "mock", bypass API entirely
         if llm_cfg.get("provider") == "mock":
