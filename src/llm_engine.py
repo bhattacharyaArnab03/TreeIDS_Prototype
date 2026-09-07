@@ -1,8 +1,77 @@
 import os
 import json
 import time
+from collections import deque
+from datetime import datetime, timezone
 import google.generativeai as genai
 from src.audit_logger import AuditLogger
+
+
+class _GeminiQuotaGuard:
+    """Private quota accounting driven only by local environment settings."""
+
+    def __init__(self):
+        self.usage_file = os.getenv("TREEIDS_GEMINI_USAGE_FILE", ".cache/gemini_usage.json")
+        self.request_windows = {"primary": deque(), "secondary": deque()}
+        self.token_windows = {"primary": deque(), "secondary": deque()}
+        self.state = self._load()
+
+    @staticmethod
+    def _today():
+        return datetime.now(timezone.utc).date().isoformat()
+
+    def _load(self):
+        try:
+            with open(self.usage_file, "r", encoding="utf-8") as usage_file:
+                state = json.load(usage_file)
+            if state.get("date") == self._today():
+                return state
+        except (FileNotFoundError, json.JSONDecodeError, OSError):
+            pass
+        return {"date": self._today(), "roles": {}}
+
+    def _save(self):
+        directory = os.path.dirname(self.usage_file)
+        if directory:
+            os.makedirs(directory, exist_ok=True)
+        with open(self.usage_file, "w", encoding="utf-8") as usage_file:
+            json.dump(self.state, usage_file, indent=2)
+
+    def reserve(self, role, estimated_tokens):
+        if self.state.get("date") != self._today():
+            self.state = {"date": self._today(), "roles": {}}
+
+        prefix = f"TREEIDS_GEMINI_{role.upper()}"
+        try:
+            limits = {
+                "rpm": int(os.environ[f"{prefix}_RPM"]),
+                "tpm": int(os.environ[f"{prefix}_TPM"]),
+                "rpd": int(os.environ[f"{prefix}_RPD"]),
+            }
+        except (KeyError, ValueError):
+            return False
+
+        now = time.time()
+        requests = self.request_windows[role]
+        tokens = self.token_windows[role]
+        while requests and now - requests[0] >= 60:
+            requests.popleft()
+        while tokens and now - tokens[0][0] >= 60:
+            tokens.popleft()
+
+        role_state = self.state.setdefault("roles", {}).setdefault(role, {"requests": 0})
+        if role_state["requests"] >= limits["rpd"]:
+            return False
+        if len(requests) >= limits["rpm"]:
+            return False
+        if sum(item[1] for item in tokens) + estimated_tokens > limits["tpm"]:
+            return False
+
+        requests.append(now)
+        tokens.append((now, estimated_tokens))
+        role_state["requests"] += 1
+        self._save()
+        return True
 
 class TreeIDSReasoningEngine:
     """
@@ -15,6 +84,7 @@ class TreeIDSReasoningEngine:
         self.config = config
         self.api_key = os.getenv("GEMINI_API_KEY")
         self.audit_logger = AuditLogger(config=self.config)
+        self._quota_guard = _GeminiQuotaGuard()
         
         if self.api_key:
             genai.configure(api_key=self.api_key)
@@ -99,21 +169,24 @@ class TreeIDSReasoningEngine:
             return self._mock_evaluation(session_node)
 
         # Tier 1: Primary Model (gemini-3.6-flash)
-        if self.api_key:
-            try:
-                model_tier_1 = genai.GenerativeModel(model_name=primary, generation_config=gen_config)
-                response = model_tier_1.generate_content(prompt, request_options={"timeout": 15})
-                return json.loads(response.text)
-            except Exception:
-                pass  # Silent failover to Tier 2
+        if self.api_key and llm_cfg.get("provider") == "cascade":
+            estimated_tokens = max(1, len(prompt) // 4)
+            if self._quota_guard.reserve("primary", estimated_tokens):
+                try:
+                    model_tier_1 = genai.GenerativeModel(model_name=primary, generation_config=gen_config)
+                    response = model_tier_1.generate_content(prompt, request_options={"timeout": 15})
+                    return json.loads(response.text)
+                except Exception:
+                    pass  # Silent failover to Tier 2
 
-            # Tier 2: Secondary Model (gemini-flash-latest)
-            try:
-                model_tier_2 = genai.GenerativeModel(model_name=secondary, generation_config=gen_config)
-                response = model_tier_2.generate_content(prompt, request_options={"timeout": 15})
-                return json.loads(response.text)
-            except Exception:
-                pass  # Silent failover to Tier 3
+            # Tier 2: Secondary Model
+            if self._quota_guard.reserve("secondary", estimated_tokens):
+                try:
+                    model_tier_2 = genai.GenerativeModel(model_name=secondary, generation_config=gen_config)
+                    response = model_tier_2.generate_content(prompt, request_options={"timeout": 15})
+                    return json.loads(response.text)
+                except Exception:
+                    pass  # Silent failover to Tier 3
 
         # Tier 3: Local Mock Engine
         if use_mock:

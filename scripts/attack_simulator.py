@@ -19,11 +19,18 @@ except ImportError:
 
 
 class AttackSimulator:
-    def __init__(self, target_ip: str = "127.0.0.1", iface: str = None):
+    def __init__(self, target_ip: str = "127.0.0.1", iface: str = None, dry_run: bool = False):
         self.target_ip = target_ip
         self.iface = iface
+        self.dry_run = dry_run
         if not SCAPY_AVAILABLE:
             print("[!] Error: Scapy is required to inject live packets. Run: pip install scapy")
+
+    def _send(self, packet) -> None:
+        """Send one packet unless the simulator is running in dry-run mode."""
+        if self.dry_run:
+            return
+        send(packet, verbose=False, iface=self.iface)
 
     def run_syn_flood(self, target_port: int = 80, count: int = 200, delay: float = 0.005) -> None:
         """Simulates a high-rate Volumetric TCP SYN Flood targeting a single service."""
@@ -32,7 +39,7 @@ class AttackSimulator:
             sport = random.randint(1024, 65535)
             seq = random.randint(10000, 999999)
             pkt = IP(dst=self.target_ip) / TCP(sport=sport, dport=target_port, flags="S", seq=seq)
-            send(pkt, verbose=False, iface=self.iface)
+            self._send(pkt)
             if delay > 0:
                 time.sleep(delay)
             if (i + 1) % 50 == 0 or i == count - 1:
@@ -48,7 +55,7 @@ class AttackSimulator:
         sport = random.randint(30000, 60000)
         for i, port in enumerate(ports):
             pkt = IP(dst=self.target_ip) / TCP(sport=sport, dport=port, flags="S", seq=1000 + i)
-            send(pkt, verbose=False, iface=self.iface)
+            self._send(pkt)
             time.sleep(delay)
             print(f"    [->] Probed port {port}...")
         print("[+] Port Scan simulation complete.\n")
@@ -60,7 +67,7 @@ class AttackSimulator:
         for i in range(count):
             sport = random.randint(1024, 65535)
             pkt = IP(dst=self.target_ip) / UDP(sport=sport, dport=target_port) / Raw(load=payload)
-            send(pkt, verbose=False, iface=self.iface)
+            self._send(pkt)
             if delay > 0:
                 time.sleep(delay)
             if (i + 1) % 50 == 0 or i == count - 1:
@@ -74,12 +81,12 @@ class AttackSimulator:
             sport = random.randint(40000, 60000)
             # SYN -> handshake initiate
             syn_pkt = IP(dst=self.target_ip) / TCP(sport=sport, dport=target_port, flags="S", seq=5000 + i)
-            send(syn_pkt, verbose=False, iface=self.iface)
+            self._send(syn_pkt)
             
             # Partial HTTP request header
             partial_http = f"GET /?id={random.randint(100, 999)} HTTP/1.1\r\nUser-Agent: Mozilla/5.0\r\n"
             data_pkt = IP(dst=self.target_ip) / TCP(sport=sport, dport=target_port, flags="PA", seq=5001 + i) / Raw(load=partial_http.encode())
-            send(data_pkt, verbose=False, iface=self.iface)
+            self._send(data_pkt)
             time.sleep(0.05)
         
         print(f"    [->] Holding {connections} connections open across time window...")
@@ -93,7 +100,7 @@ class AttackSimulator:
             sport = random.randint(40000, 65000)
             dport = random.choice([80, 443, 53, 8080])
             pkt = IP(dst=self.target_ip) / TCP(sport=sport, dport=dport, flags="PA", seq=20000 + i) / Raw(load=b"GET /index.html HTTP/1.1\r\nHost: example.com\r\n\r\n")
-            send(pkt, verbose=False, iface=self.iface)
+            self._send(pkt)
             time.sleep(0.1)
         print("[+] Benign baseline simulation complete.\n")
 
@@ -118,9 +125,15 @@ def main():
     parser.add_argument("--port", type=int, default=80, help="Target port for single-port attacks (default: 80)")
     parser.add_argument("--count", type=int, default=100, help="Packet count")
     parser.add_argument("--iface", default=None, help="Network interface to bind (default: default interface)")
+    parser.add_argument("--dry-run", action="store_true", help="Build scenarios without transmitting packets")
     
     args = parser.parse_args()
-    sim = AttackSimulator(target_ip=args.target, iface=args.iface)
+    if args.count < 1:
+        parser.error("--count must be at least 1")
+    if not 1 <= args.port <= 65535:
+        parser.error("--port must be between 1 and 65535")
+
+    sim = AttackSimulator(target_ip=args.target, iface=args.iface, dry_run=args.dry_run)
 
     if args.attack:
         if args.attack == "syn_flood":

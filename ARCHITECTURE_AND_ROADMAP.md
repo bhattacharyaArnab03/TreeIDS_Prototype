@@ -117,17 +117,37 @@ PHASE 1 (Completed)          PHASE 2 (Review 2)            PHASE 3 (Review 3)
 | **Phase 1** | 4-Tier Tree Constructor | **Completed** | Hierarchical Host-Session-Flow JSON tree builder module. |
 | **Phase 1** | Cognitive Reasoning Core | **Completed** | Gemini 0.1 API wrapper with JSON schema enforcement & fallback. |
 | **Phase 1** | Post-Hoc Evaluator | **Completed** | Hidden ground-truth dictionary validation engine. |
-| **Phase 2** | UNSW-NB15 Schema Adapter | *In Progress* | Header normalization dictionary mapping pipeline. |
-| **Phase 2** | Live Packet Capture Engine | *Pending* | Asynchronous Scapy sniffer utilizing thread-safe `queue.Queue`. |
-| **Phase 2** | Sliding Window Aggregator | *Pending* | Time-bounded packet-to-flow structural aggregation engine. |
-| **Phase 2** | Attack Simulation Suite | *Pending* | Python script injecting synthetic live SYN floods and port scans. |
-| **Phase 3** | Dynamic Tree Pruning Module | *Pending* | Lightweight local heuristic filter pruning benign sub-trees. |
-| **Phase 3** | Baseline Benchmark Suite | *Pending* | Scikit-learn/XGBoost supervised training & comparison scripts. |
+| **Phase 2** | UNSW-NB15 Schema Adapter | **Completed** | Header normalization adapter supports CIC-IDS2017, UNSW-NB15, and generic CSV schemas. |
+| **Phase 2** | Live Packet Capture Engine | **Completed** | Asynchronous Scapy/Npcap sniffer using a thread-safe `queue.Queue`; verified on Windows. |
+| **Phase 2** | Sliding Window Aggregator | **Completed** | Time-bounded packet-to-flow aggregation with configurable window and flow timeout. |
+| **Phase 2** | Attack Simulation Suite | **Completed** | Controlled Scapy scenarios for SYN floods, port scans, UDP bursts, low-and-slow traffic, benign traffic, and dry-run validation. |
+| **Phase 2** | Cross-Dataset Testing | **Completed** | Mock-based validation runner checks normalization, label isolation, tree construction, and bounded detection across all configured dataset selections. |
+| **Phase 3** | Dynamic Tree Pruning Module | **Completed** | Conservative local pruning retains repeated/high-volume and sensitive-port sessions while removing low-signal leaves; integrated into tree construction. |
+| **Phase 3** | Baseline Benchmark Suite | **Completed** | Local Random Forest and XGBoost binary benign-versus-attack benchmark with accuracy, precision, recall, F1, training/prediction latency, and feature importance reporting. |
 | **Phase 3** | Capstone Thesis Manuscript | *Pending* | Complete academic documentation and final presentation deck. |
 
 ---
 
-## 5. Architectural Principles & Defense Positions
+## 5. Current Implementation State
+
+### Completed
+
+* **Batch execution:** Loads the configured static dataset, samples up to 1,000 records, normalizes the schema, builds the tree index, and evaluates up to 10 session nodes.
+* **Live execution:** Captures packets through Scapy/Npcap, aggregates 10-second windows, expires flows after 30 seconds, builds a tree per window, and evaluates up to 10 sessions per window.
+* **Reasoning fallback:** Uses the configured primary Gemini model, secondary Gemini model, and rule-based mock fallback.
+* **Development/API modes:** Mock inference is the default for routine development. Gemini is opt-in with `--llm-provider cascade`, which uses the configured primary-to-secondary-to-mock fallback chain.
+* **Outputs:** Writes detection results, human-readable audit logs, JSONL audit records, and the processed tree index.
+* **Cross-dataset validation:** `scripts/cross_dataset_test.py` passed all 10 configured CIC-IDS2017 selections using bounded 1,000-row samples and mock inference. Every selection normalized successfully, isolated ground-truth labels, built a tree, and evaluated 10 sessions. The compact report is saved at `outputs/cross_dataset_test_results.json`.
+* **Dynamic tree pruning:** `src/tree_pruner.py` is integrated into tree construction. On the bounded `Friday_DDoS` sample, it reduced sessions from 301 to 115 and serialized tree size from 152,592 to 73,961 bytes (51.53% smaller) with comparable build time. The benchmark is saved at `outputs/pruning_benchmark.json`.
+* **Supervised baselines:** `scripts/baseline_benchmark.py` evaluated Random Forest and XGBoost on a stratified 75/25 split of 1,000 bounded `Friday_DDoS` rows, using binary `BENIGN` versus `ATTACK` labels. Random Forest achieved 1.000 accuracy/F1 with 275.45 ms training and 60.23 ms prediction; XGBoost achieved 0.996 accuracy/F1 with 154.61 ms training and 4.19 ms prediction. Full metrics, class reports, feature importance, and zero API cost are saved at `outputs/baseline_benchmark.json`.
+
+### Latest Pending Tasks
+
+1. Complete thesis documentation and final defense material.
+
+---
+
+## 6. Architectural Principles & Defense Positions
 
 1. **Vectorless RAG vs. Vector RAG:** Dense vector databases (e.g., FAISS) rely on cosine similarity, which groups logs based on mathematical adjacency rather than logical network context. TreeIDS uses deterministic tree traversal to keep structural session boundaries intact, eliminating context fragmentation.
 2. **Domain-Guided Feature Summarization:** Rather than running statistical dimension-reduction algorithms (e.g., SHAP, ExtraTrees), TreeIDS extracts core protocol attributes and organizes them into structured JSON key-value pairs, reducing token consumption to ~250–300 tokens per prompt.

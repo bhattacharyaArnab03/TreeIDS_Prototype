@@ -32,7 +32,7 @@ dataset:
   sample_size: 1000  # Representative sampling across active day
 
 live_capture:
-  interface: null  # null = default system interface
+  interface: '\Device\NPF_Loopback'  # Npcap loopback for localhost simulation tests
   bpf_filter: "ip and (tcp or udp or icmp)"
   window_duration_sec: 10.0
   flow_timeout_sec: 30.0
@@ -46,10 +46,16 @@ tree_builder:
     - "dst_ip"
     - "dst_port"
 
+tree_pruning:
+  enabled: true
+  min_flow_count: 2
+  min_forward_packets: 50
+  retain_ports: [21, 22, 23, 25, 53, 80, 110, 135, 139, 143, 443, 445, 1433, 3306, 3389, 8080, 8443]
+
 llm:
-  provider: "cascade"
-  primary_model: "gemini-3.6-flash"
-  secondary_model: "gemini-flash-latest"
+  provider: "mock"  # Daily development default; use --llm-provider cascade for Gemini
+  primary_model: "gemini-3.5-flash-lite"
+  secondary_model: "gemini-2.5-flash-lite"
   fallback_to_mock: true
   temperature: 0.1
 

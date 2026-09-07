@@ -1,4 +1,5 @@
 import pandas as pd
+from src.tree_pruner import DynamicTreePruner
 
 class TreeBuilder:
     """
@@ -8,6 +9,7 @@ class TreeBuilder:
     def __init__(self, config: dict):
         self.config = config
         self.tree_cfg = config.get("tree_builder", {})
+        self.pruner = DynamicTreePruner(config)
 
     def build_tree(self, df: pd.DataFrame) -> dict:
         """
@@ -67,7 +69,15 @@ class TreeBuilder:
 
             tree_index["hosts"][str(src_ip)] = host_node
 
+        tree_index = self.pruner.prune(tree_index)
+        pruning = tree_index.get("pruning", {})
         print(f"[+] Tree Index built successfully with {len(tree_index['hosts'])} unique Host nodes.")
+        if pruning.get("enabled"):
+            print(
+                f"[+] Dynamic pruning retained {pruning['sessions_after']}/"
+                f"{pruning['sessions_before']} sessions and removed "
+                f"{pruning['flow_samples_removed']} low-signal flow samples."
+            )
         return tree_index
 
 
