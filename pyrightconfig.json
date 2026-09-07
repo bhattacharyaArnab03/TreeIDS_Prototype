@@ -1,0 +1,14 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  "include": [
+    "src",
+    "scripts",
+    "main.py",
+    "test_gemini.py"
+  ],
+  "extraPaths": [
+    "src",
+    ".venv/Lib/site-packages"
+  ]
+}
