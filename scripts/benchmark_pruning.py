@@ -33,11 +33,15 @@ def build_measurement(config: dict, frame) -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default="config/config.yaml")
+    parser.add_argument("--dataset", default=None)
     parser.add_argument("--output", default="outputs/pruning_benchmark.json")
     args = parser.parse_args()
 
     with open(args.config, "r", encoding="utf-8") as config_file:
         config = yaml.safe_load(config_file)
+
+    if args.dataset:
+        config.setdefault("dataset", {})["active_day"] = args.dataset
 
     frame = DataLoader(config).fetch_dataset()
     enabled_config = deepcopy(config)

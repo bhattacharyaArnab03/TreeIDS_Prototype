@@ -1,0 +1,172 @@
+[
+    {
+        "source_ip": "172.16.0.1",
+        "session": "192.168.10.50:19",
+        "classification": "BENIGN",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
+        "reasoning_path": [
+            "Root -> Inspected Host [172.16.0.1] with 590 flows"
+        ],
+        "explanation": "N/A",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
+    },
+    {
+        "source_ip": "172.16.0.1",
+        "session": "192.168.10.50:20",
+        "classification": "BENIGN",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
+        "reasoning_path": [
+            "Root -> Inspected Host [172.16.0.1] with 590 flows"
+        ],
+        "explanation": "N/A",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
+    },
+    {
+        "source_ip": "172.16.0.1",
+        "session": "192.168.10.50:22",
+        "classification": "BENIGN",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
+        "reasoning_path": [
+            "Root -> Inspected Host [172.16.0.1] with 590 flows"
+        ],
+        "explanation": "N/A",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
+    },
+    {
+        "source_ip": "172.16.0.1",
+        "session": "192.168.10.50:23",
+        "classification": "BENIGN",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
+        "reasoning_path": [
+            "Root -> Inspected Host [172.16.0.1] with 590 flows"
+        ],
+        "explanation": "N/A",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
+    },
+    {
+        "source_ip": "172.16.0.1",
+        "session": "192.168.10.50:25",
+        "classification": "BENIGN",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
+        "reasoning_path": [
+            "Root -> Inspected Host [172.16.0.1] with 590 flows"
+        ],
+        "explanation": "N/A",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
+    },
+    {
+        "source_ip": "172.16.0.1",
+        "session": "192.168.10.50:26",
+        "classification": "BENIGN",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
+        "reasoning_path": [
+            "Root -> Inspected Host [172.16.0.1] with 590 flows"
+        ],
+        "explanation": "N/A",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
+    },
+    {
+        "source_ip": "172.16.0.1",
+        "session": "192.168.10.50:32",
+        "classification": "BENIGN",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
+        "reasoning_path": [
+            "Root -> Inspected Host [172.16.0.1] with 590 flows"
+        ],
+        "explanation": "N/A",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
+    },
+    {
+        "source_ip": "172.16.0.1",
+        "session": "192.168.10.50:80",
+        "classification": "BENIGN",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
+        "reasoning_path": [
+            "Root -> Inspected Host [172.16.0.1] with 590 flows"
+        ],
+        "explanation": "N/A",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
+    },
+    {
+        "source_ip": "172.16.0.1",
+        "session": "192.168.10.50:110",
+        "classification": "BENIGN",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
+        "reasoning_path": [
+            "Root -> Inspected Host [172.16.0.1] with 590 flows"
+        ],
+        "explanation": "N/A",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
+    },
+    {
+        "source_ip": "172.16.0.1",
+        "session": "192.168.10.50:143",
+        "classification": "BENIGN",
+        "confidence": 0.98,
+        "threat_type": "Normal Network Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
+        "reasoning_path": [
+            "Root -> Inspected Host [172.16.0.1] with 590 flows"
+        ],
+        "explanation": "N/A",
+        "recommended_mitigation": "No action required. Maintain baseline logging."
+    }
+]

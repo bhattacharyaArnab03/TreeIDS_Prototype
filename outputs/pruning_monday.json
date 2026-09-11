@@ -1,0 +1,28 @@
+{
+  "dataset": "Monday",
+  "rows_processed": 1000,
+  "without_pruning": {
+    "build_time_ms": 899.23,
+    "json_size_bytes": 302221,
+    "hosts": 174,
+    "sessions": 582,
+    "pruning": {
+      "enabled": false
+    }
+  },
+  "with_pruning": {
+    "build_time_ms": 940.31,
+    "json_size_bytes": 207373,
+    "hosts": 174,
+    "sessions": 360,
+    "pruning": {
+      "enabled": true,
+      "sessions_before": 582,
+      "sessions_after": 360,
+      "sessions_removed": 222,
+      "flow_samples_removed": 222
+    }
+  },
+  "size_reduction_percent": 31.38,
+  "session_reduction_percent": 38.14
+}

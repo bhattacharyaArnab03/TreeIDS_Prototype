@@ -24,6 +24,7 @@
   "python.terminal.activateEnvironment": true,
   "python.useEnvironmentsExtension": false,
   "python.analysis.extraPaths": [
+    "${workspaceFolder}",
     "${workspaceFolder}/src",
     "${workspaceFolder}/.venv/Lib/site-packages"
   ]

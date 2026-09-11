@@ -3,15 +3,15 @@ import json
 import time
 from collections import deque
 from datetime import datetime, timezone
-import google.generativeai as genai
+from groq import Groq
 from src.audit_logger import AuditLogger
 
 
-class _GeminiQuotaGuard:
-    """Private quota accounting driven only by local environment settings."""
+class _GroqQuotaGuard:
+    """Private quota accounting driven by local environment settings for Groq API."""
 
     def __init__(self):
-        self.usage_file = os.getenv("TREEIDS_GEMINI_USAGE_FILE", ".cache/gemini_usage.json")
+        self.usage_file = os.getenv("TREEIDS_GROQ_USAGE_FILE", ".cache/groq_usage.json")
         self.request_windows = {"primary": deque(), "secondary": deque()}
         self.token_windows = {"primary": deque(), "secondary": deque()}
         self.state = self._load()
@@ -41,12 +41,15 @@ class _GeminiQuotaGuard:
         if self.state.get("date") != self._today():
             self.state = {"date": self._today(), "roles": {}}
 
-        prefix = f"TREEIDS_GEMINI_{role.upper()}"
+        prefix_groq = f"TREEIDS_GROQ_{role.upper()}"
         try:
+            rpm = os.getenv(f"{prefix_groq}_RPM", "30")
+            tpm = os.getenv(f"{prefix_groq}_TPM", "14400")
+            rpd = os.getenv(f"{prefix_groq}_RPD", "14400")
             limits = {
-                "rpm": int(os.environ[f"{prefix}_RPM"]),
-                "tpm": int(os.environ[f"{prefix}_TPM"]),
-                "rpd": int(os.environ[f"{prefix}_RPD"]),
+                "rpm": int(rpm),
+                "tpm": int(tpm),
+                "rpd": int(rpd),
             }
         except (KeyError, ValueError):
             return False
@@ -59,7 +62,12 @@ class _GeminiQuotaGuard:
         while tokens and now - tokens[0][0] >= 60:
             tokens.popleft()
 
-        role_state = self.state.setdefault("roles", {}).setdefault(role, {"requests": 0})
+        if "roles" not in self.state or not isinstance(self.state["roles"], dict):
+            self.state["roles"] = {}
+        roles_dict = self.state["roles"]
+        if role not in roles_dict or not isinstance(roles_dict[role], dict):
+            roles_dict[role] = {"requests": 0}
+        role_state = roles_dict[role]
         if role_state["requests"] >= limits["rpd"]:
             return False
         if len(requests) >= limits["rpm"]:
@@ -73,21 +81,26 @@ class _GeminiQuotaGuard:
         self._save()
         return True
 
+
 class TreeIDSReasoningEngine:
     """
     Vectorless RAG Engine with silent backend multi-tier fallback architecture:
-    Primary: gemini-3.6-flash
-    Secondary: gemini-2.0-flash / gemini-flash-latest
-    Tertiary: Mock Rule-Based Heuristic
+    Primary: qwen/qwen3.8-27b (Groq Cloud API)
+    Secondary: openai/gpt-oss-20b (Groq Cloud API)
+    Tertiary: Mock Rule-Based Heuristic Engine
     """
     def __init__(self, config: dict):
         self.config = config
-        self.api_key = os.getenv("GEMINI_API_KEY")
+        self.api_key = os.getenv("GROQ_API_KEY")
         self.audit_logger = AuditLogger(config=self.config)
-        self._quota_guard = _GeminiQuotaGuard()
-        
-        if self.api_key:
-            genai.configure(api_key=self.api_key)
+        self._quota_guard = _GroqQuotaGuard()
+        self.groq_client = None
+
+        if self.api_key and not self.api_key.startswith("your_"):
+            try:
+                self.groq_client = Groq(api_key=self.api_key)
+            except Exception as e:
+                print(f"  [!] Warning: Failed to initialize Groq client: {e}")
 
     def analyze_tree(self, tree_index: dict, dataset_name: str = "Unknown") -> list:
         # Read session limit from tree_builder section in config.yaml
@@ -125,8 +138,8 @@ class TreeIDSReasoningEngine:
                     "technique_id": "N/A",
                     "technique_name": "N/A"
                 })
-                reasoning = classification.get("reasoning_path", classification.get("explanation", "No reasoning provided."))
-                mitigation = classification.get("recommended_mitigation", "Standard SOC baseline monitoring.")
+                reasoning = classification.get("explanation", classification.get("reasoning", "N/A"))
+                mitigation = classification.get("recommended_mitigation", "N/A")
 
                 entry = {
                     "source_ip": str(src_ip),
@@ -154,39 +167,55 @@ class TreeIDSReasoningEngine:
         prompt = self._build_prompt(session_node, src_ip)
         
         llm_cfg = self.config.get('llm', {})
-        primary = llm_cfg.get('primary_model', 'gemini-3.6-flash')
-        secondary = llm_cfg.get('secondary_model', 'gemini-flash-latest')
+        primary = os.getenv("GROQ_PRIMARY_MODEL") or llm_cfg.get('primary_model', 'qwen/qwen3.8-27b')
+        secondary = os.getenv("GROQ_SECONDARY_MODEL") or llm_cfg.get('secondary_model', 'openai/gpt-oss-20b')
         use_mock = llm_cfg.get('fallback_to_mock', True)
         temp = llm_cfg.get('temperature', 0.1)
-
-        gen_config = genai.GenerationConfig(
-            response_mime_type="application/json",
-            temperature=temp
-        )
 
         # If provider is explicitly set to "mock", bypass API entirely
         if llm_cfg.get("provider") == "mock":
             return self._mock_evaluation(session_node)
 
-        # Tier 1: Primary Model (gemini-3.6-flash)
-        if self.api_key and llm_cfg.get("provider") == "cascade":
+        # Tier 1: Primary Model (Groq - qwen/qwen3.8-27b)
+        if self.groq_client and llm_cfg.get("provider") == "cascade":
             estimated_tokens = max(1, len(prompt) // 4)
             if self._quota_guard.reserve("primary", estimated_tokens):
                 try:
-                    model_tier_1 = genai.GenerativeModel(model_name=primary, generation_config=gen_config)
-                    response = model_tier_1.generate_content(prompt, request_options={"timeout": 15})
-                    return json.loads(response.text)
-                except Exception:
-                    pass  # Silent failover to Tier 2
+                    response = self.groq_client.chat.completions.create(
+                        messages=[
+                            {"role": "system", "content": "You are TreeIDS, an expert cognitive network intrusion detection and SOC reasoning agent. Always output valid JSON."},
+                            {"role": "user", "content": prompt}
+                        ],
+                        model=primary,
+                        temperature=temp,
+                        response_format={"type": "json_object"},
+                        timeout=30.0
+                    )
+                    content = response.choices[0].message.content
+                    if content is not None:
+                        return json.loads(content)
+                except Exception as e:
+                    print(f"  [!] Tier 1 ({primary}) failover -> {type(e).__name__}: {e}")
 
-            # Tier 2: Secondary Model
+            # Tier 2: Secondary Model (Groq - openai/gpt-oss-20b)
+
             if self._quota_guard.reserve("secondary", estimated_tokens):
                 try:
-                    model_tier_2 = genai.GenerativeModel(model_name=secondary, generation_config=gen_config)
-                    response = model_tier_2.generate_content(prompt, request_options={"timeout": 15})
-                    return json.loads(response.text)
-                except Exception:
-                    pass  # Silent failover to Tier 3
+                    response = self.groq_client.chat.completions.create(
+                        messages=[
+                            {"role": "system", "content": "You are TreeIDS, an expert cognitive network intrusion detection and SOC reasoning agent. Always output valid JSON."},
+                            {"role": "user", "content": prompt}
+                        ],
+                        model=secondary,
+                        temperature=temp,
+                        response_format={"type": "json_object"},
+                        timeout=30.0
+                    )
+                    content = response.choices[0].message.content
+                    if content is not None:
+                        return json.loads(content)
+                except Exception as e:
+                    print(f"  [!] Tier 2 ({secondary}) failover -> {type(e).__name__}: {e}")
 
         # Tier 3: Local Mock Engine
         if use_mock:

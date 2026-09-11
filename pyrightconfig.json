@@ -5,9 +5,10 @@
     "src",
     "scripts",
     "main.py",
-    "test_gemini.py"
+    "test_groq.py"
   ],
   "extraPaths": [
+    ".",
     "src",
     ".venv/Lib/site-packages"
   ]

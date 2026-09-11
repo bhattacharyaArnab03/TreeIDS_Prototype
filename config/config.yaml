@@ -53,9 +53,9 @@ tree_pruning:
   retain_ports: [21, 22, 23, 25, 53, 80, 110, 135, 139, 143, 443, 445, 1433, 3306, 3389, 8080, 8443]
 
 llm:
-  provider: "mock"  # Daily development default; use --llm-provider cascade for Gemini
-  primary_model: "gemini-3.5-flash-lite"
-  secondary_model: "gemini-2.5-flash-lite"
+  provider: "mock"  # Options: "mock" (offline rule heuristics) | "cascade" (Groq Cloud API with mock fallback)
+  primary_model: "qwen/qwen3.8-27b"  # Primary Groq Cloud model (Qwen 27B)
+  secondary_model: "openai/gpt-oss-20b"  # Secondary Groq Cloud fallback model (GPT-OSS 20B)
   fallback_to_mock: true
   temperature: 0.1
 

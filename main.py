@@ -18,7 +18,7 @@ def main():
     parser.add_argument("--mode", choices=["batch", "live"], default=None, help="Execution mode ('batch' or 'live')")
     parser.add_argument("--dataset", type=str, default=None, help="Active dataset name override (e.g. Friday_DDoS, Friday_PortScan)")
     parser.add_argument("--windows", type=int, default=None, help="Max sliding windows to evaluate in live mode")
-    parser.add_argument("--llm-provider", choices=["mock", "cascade"], default=None, help="Inference provider (mock by default; cascade enables Gemini)")
+    parser.add_argument("--llm-provider", choices=["mock", "cascade"], default=None, help="Inference provider (mock by default; cascade enables Groq API)")
     parser.add_argument("--config", type=str, default="config/config.yaml", help="Path to config.yaml")
     args = parser.parse_args()
 
