@@ -3,6 +3,7 @@ import json
 import time
 from collections import deque
 from datetime import datetime, timezone
+from typing import Any, Dict
 from groq import Groq
 from src.audit_logger import AuditLogger
 
@@ -12,33 +13,33 @@ class _GroqQuotaGuard:
 
     def __init__(self):
         self.usage_file = os.getenv("TREEIDS_GROQ_USAGE_FILE", ".cache/groq_usage.json")
-        self.request_windows = {"primary": deque(), "secondary": deque()}
-        self.token_windows = {"primary": deque(), "secondary": deque()}
-        self.state = self._load()
+        self.request_windows: dict[str, deque[float]] = {"primary": deque(), "secondary": deque()}
+        self.token_windows: dict[str, deque[tuple[float, int]]] = {"primary": deque(), "secondary": deque()}
+        self.state: dict[str, Any] = self._load()
 
     @staticmethod
-    def _today():
+    def _today() -> str:
         return datetime.now(timezone.utc).date().isoformat()
 
-    def _load(self):
+    def _load(self) -> dict[str, Any]:
         try:
             with open(self.usage_file, "r", encoding="utf-8") as usage_file:
                 state = json.load(usage_file)
-            if state.get("date") == self._today():
+            if isinstance(state, dict) and state.get("date") == self._today():
                 return state
         except (FileNotFoundError, json.JSONDecodeError, OSError):
             pass
         return {"date": self._today(), "roles": {}}
 
-    def _save(self):
+    def _save(self) -> None:
         directory = os.path.dirname(self.usage_file)
         if directory:
             os.makedirs(directory, exist_ok=True)
         with open(self.usage_file, "w", encoding="utf-8") as usage_file:
             json.dump(self.state, usage_file, indent=2)
 
-    def reserve(self, role, estimated_tokens):
-        if self.state.get("date") != self._today():
+    def reserve(self, role: str, estimated_tokens: int) -> bool:
+        if not isinstance(self.state, dict) or self.state.get("date") != self._today():
             self.state = {"date": self._today(), "roles": {}}
 
         prefix_groq = f"TREEIDS_GROQ_{role.upper()}"
@@ -62,13 +63,17 @@ class _GroqQuotaGuard:
         while tokens and now - tokens[0][0] >= 60:
             tokens.popleft()
 
-        if "roles" not in self.state or not isinstance(self.state["roles"], dict):
-            self.state["roles"] = {}
-        roles_dict = self.state["roles"]
-        if role not in roles_dict or not isinstance(roles_dict[role], dict):
-            roles_dict[role] = {"requests": 0}
-        role_state = roles_dict[role]
-        if role_state["requests"] >= limits["rpd"]:
+        roles = self.state.get("roles")
+        if not isinstance(roles, dict):
+            roles = {}
+            self.state["roles"] = roles
+
+        role_entry = roles.get(role)
+        if not isinstance(role_entry, dict):
+            role_entry = {"requests": 0}
+            roles[role] = role_entry
+
+        if int(role_entry.get("requests", 0)) >= limits["rpd"]:
             return False
         if len(requests) >= limits["rpm"]:
             return False
@@ -77,7 +82,7 @@ class _GroqQuotaGuard:
 
         requests.append(now)
         tokens.append((now, estimated_tokens))
-        role_state["requests"] += 1
+        role_entry["requests"] = int(role_entry.get("requests", 0)) + 1
         self._save()
         return True
 

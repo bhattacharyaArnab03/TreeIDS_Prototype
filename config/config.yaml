@@ -48,8 +48,11 @@ tree_builder:
 
 tree_pruning:
   enabled: true
-  min_flow_count: 2
-  min_forward_packets: 50
+  mode: "adaptive"  # Options: "adaptive" (data-driven dispersion thresholds) | "static" (fixed thresholds)
+  adaptive_packet_quantile: 0.50  # Median traffic density quantile
+  scan_fanout_threshold: 5  # Preserve fan-out scans if >= 5 target ports probed
+  min_flow_count: 2  # Static fallback bound
+  min_forward_packets: 50  # Static fallback bound
   retain_ports: [21, 22, 23, 25, 53, 80, 110, 135, 139, 143, 443, 445, 1433, 3306, 3389, 8080, 8443]
 
 llm:

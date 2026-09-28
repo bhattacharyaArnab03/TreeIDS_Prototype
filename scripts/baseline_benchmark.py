@@ -8,6 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+import pandas as pd
 import yaml
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, f1_score, precision_score, recall_score
@@ -34,7 +35,7 @@ def prepare_features(frame):
     features = frame[FEATURE_COLUMNS].copy()
     features["protocol"] = frame["protocol"].astype(str)
     return features.join(
-        __import__("pandas").get_dummies(features.pop("protocol"), prefix="protocol", dtype=float)
+        pd.get_dummies(features.pop("protocol"), prefix="protocol", dtype=float)
     ).fillna(0.0)
 
 
@@ -82,14 +83,36 @@ def main() -> None:
 
     loader = DataLoader(config)
     frame = loader.fetch_dataset()
-    labels = loader.last_ground_truth.astype(str).reset_index(drop=True)
+    raw_labels = loader.last_ground_truth
+    if raw_labels is None:
+        raw_labels = pd.Series(["UNKNOWN"] * len(frame), index=frame.index)
+    labels = raw_labels.astype(str).reset_index(drop=True)
     features = prepare_features(frame.reset_index(drop=True))
 
     # Reduce labels to the benchmark target: BENIGN versus any attack family.
     target = labels.map(lambda value: "BENIGN" if value.strip().upper() == "BENIGN" else "ATTACK")
     counts = target.value_counts()
+
+    benchmark = {
+        "dataset": config.get("dataset", {}).get("active_day", "Unknown"),
+        "rows_processed": len(frame),
+        "class_distribution": counts.to_dict(),
+        "features": list(features.columns),
+        "models": [],
+    }
+
     if len(counts) < 2 or counts.min() < 2:
-        raise ValueError(f"Need at least two samples in each class; found {counts.to_dict()}")
+        benchmark["status"] = "Single-class baseline dataset (BENIGN-only normal baseline day)"
+        benchmark["note"] = (
+            "Supervised binary classifiers (Random Forest / XGBoost) require at least two distinct "
+            "classes (BENIGN vs ATTACK) to train. TreeIDS zero-shot structural reasoning operates "
+            "natively on single-class baseline traffic without requiring retraining."
+        )
+        with open(args.output, "w", encoding="utf-8") as output_file:
+            json.dump(benchmark, output_file, indent=2)
+        print(json.dumps(benchmark, indent=2))
+        print(f"[+] Baseline report saved to {args.output}")
+        return
 
     x_train, x_test, y_train, y_test = train_test_split(
         features, target, test_size=0.25, random_state=42, stratify=target
@@ -98,15 +121,8 @@ def main() -> None:
     y_train_encoded = encoder.fit_transform(y_train)
     y_test_encoded = encoder.transform(y_test)
     class_ids = list(range(len(encoder.classes_)))
+    benchmark["split"] = {"train_rows": len(x_train), "test_rows": len(x_test), "random_state": 42}
 
-    benchmark = {
-        "dataset": config.get("dataset", {}).get("active_day", "Unknown"),
-        "rows_processed": len(frame),
-        "class_distribution": counts.to_dict(),
-        "features": list(features.columns),
-        "split": {"train_rows": len(x_train), "test_rows": len(x_test), "random_state": 42},
-        "models": [],
-    }
 
     random_forest = RandomForestClassifier(
         n_estimators=args.estimators, random_state=42, n_jobs=-1, class_weight="balanced"

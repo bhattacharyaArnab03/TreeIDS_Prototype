@@ -119,6 +119,7 @@ PHASE 1 (Completed)          PHASE 2 (Completed)           PHASE 3 (Completed)
 | **Phase 2** | Attack Simulation Suite | **Completed** | Controlled Scapy scenarios for SYN floods, port scans, and HTTP low-and-slow traffic. |
 | **Phase 2** | Cross-Dataset Testing | **Completed** | Mock-based validation runner checking normalization, label isolation, and tree construction across all configured datasets. |
 | **Phase 3** | Dynamic Tree Pruning Module | **Completed** | Retains repeated/high-volume and sensitive-port sessions while pruning low-signal leaves; achieves 30%–60% token reduction. |
+| **Phase 3** | Adaptive Data-Driven Pruning | **Completed** | Statistical dispersion heuristics (IQR, median packet quantiles, scan fan-out detection) dynamically adjusting cutoffs across diverse attack densities. |
 | **Phase 3** | Baseline Benchmark Suite | **Completed** | Evaluates Random Forest and XGBoost benchmarks alongside zero-shot TreeIDS static mode. |
 | **Phase 3** | Multi-Day Comparative Study | **Completed** | Evaluated on `Wednesday-workingHours` (attacks), `Monday-WorkingHours` (benign baseline), and Live Packet Sniffing mode. |
 

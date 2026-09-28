@@ -28,10 +28,11 @@ def run_cross_dataset_test(config_path: str) -> list[dict]:
         loader = DataLoader(config)
         frame = loader.fetch_dataset()
         tree = TreeBuilder(config).build_tree(frame)
-        detections = TreeIDSReasoningEngine(config).analyze_tree(
-            tree, dataset_name=dataset_name
-        )
-        labels = loader.last_ground_truth.astype(str).value_counts().to_dict()
+        raw_labels = loader.last_ground_truth
+        if raw_labels is not None:
+            labels = raw_labels.astype(str).value_counts().to_dict()
+        else:
+            labels = pd.Series(["UNKNOWN"] * len(frame)).value_counts().to_dict()
 
         results.append(
             {

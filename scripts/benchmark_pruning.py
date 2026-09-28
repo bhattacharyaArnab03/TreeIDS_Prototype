@@ -44,24 +44,36 @@ def main() -> None:
         config.setdefault("dataset", {})["active_day"] = args.dataset
 
     frame = DataLoader(config).fetch_dataset()
-    enabled_config = deepcopy(config)
-    disabled_config = deepcopy(config)
-    disabled_config.setdefault("tree_pruning", {})["enabled"] = False
+    unpruned_config = deepcopy(config)
+    unpruned_config.setdefault("tree_pruning", {})["enabled"] = False
+
+    static_config = deepcopy(config)
+    static_config.setdefault("tree_pruning", {})["enabled"] = True
+    static_config.setdefault("tree_pruning", {})["mode"] = "static"
+
+    adaptive_config = deepcopy(config)
+    adaptive_config.setdefault("tree_pruning", {})["enabled"] = True
+    adaptive_config.setdefault("tree_pruning", {})["mode"] = "adaptive"
 
     report = {
         "dataset": config.get("dataset", {}).get("active_day", "Unknown"),
         "rows_processed": len(frame),
-        "without_pruning": build_measurement(disabled_config, frame),
-        "with_pruning": build_measurement(enabled_config, frame),
+        "without_pruning": build_measurement(unpruned_config, frame),
+        "static_pruning": build_measurement(static_config, frame),
+        "adaptive_pruning": build_measurement(adaptive_config, frame),
     }
     before = report["without_pruning"]
-    after = report["with_pruning"]
-    report["size_reduction_percent"] = round(
-        (1 - after["json_size_bytes"] / before["json_size_bytes"]) * 100, 2
-    ) if before["json_size_bytes"] else 0.0
-    report["session_reduction_percent"] = round(
-        (1 - after["sessions"] / before["sessions"]) * 100, 2
-    ) if before["sessions"] else 0.0
+    stat = report["static_pruning"]
+    adap = report["adaptive_pruning"]
+
+    report["static_reduction"] = {
+        "size_reduction_percent": round((1 - stat["json_size_bytes"] / before["json_size_bytes"]) * 100, 2) if before["json_size_bytes"] else 0.0,
+        "session_reduction_percent": round((1 - stat["sessions"] / before["sessions"]) * 100, 2) if before["sessions"] else 0.0,
+    }
+    report["adaptive_reduction"] = {
+        "size_reduction_percent": round((1 - adap["json_size_bytes"] / before["json_size_bytes"]) * 100, 2) if before["json_size_bytes"] else 0.0,
+        "session_reduction_percent": round((1 - adap["sessions"] / before["sessions"]) * 100, 2) if before["sessions"] else 0.0,
+    }
 
     with open(args.output, "w", encoding="utf-8") as output_file:
         json.dump(report, output_file, indent=2)
@@ -71,4 +83,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    main()

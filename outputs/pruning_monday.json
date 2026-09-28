@@ -2,27 +2,57 @@
   "dataset": "Monday",
   "rows_processed": 1000,
   "without_pruning": {
-    "build_time_ms": 899.23,
-    "json_size_bytes": 302221,
+    "build_time_ms": 2489.19,
+    "json_size_bytes": 302239,
     "hosts": 174,
     "sessions": 582,
     "pruning": {
-      "enabled": false
+      "enabled": false,
+      "mode": "adaptive"
     }
   },
-  "with_pruning": {
-    "build_time_ms": 940.31,
-    "json_size_bytes": 207373,
+  "static_pruning": {
+    "build_time_ms": 2359.36,
+    "json_size_bytes": 207416,
     "hosts": 174,
     "sessions": 360,
     "pruning": {
       "enabled": true,
+      "mode": "static",
       "sessions_before": 582,
       "sessions_after": 360,
       "sessions_removed": 222,
-      "flow_samples_removed": 222
+      "flow_samples_removed": 222,
+      "adaptive_thresholds": null
     }
   },
-  "size_reduction_percent": 31.38,
-  "session_reduction_percent": 38.14
+  "adaptive_pruning": {
+    "build_time_ms": 2376.0,
+    "json_size_bytes": 220943,
+    "hosts": 174,
+    "sessions": 391,
+    "pruning": {
+      "enabled": true,
+      "mode": "adaptive",
+      "sessions_before": 582,
+      "sessions_after": 391,
+      "sessions_removed": 191,
+      "flow_samples_removed": 191,
+      "adaptive_thresholds": {
+        "total_evaluated_sessions": 582,
+        "packet_median": 3,
+        "packet_iqr": 8,
+        "dynamic_packet_threshold": 10,
+        "dynamic_flow_threshold": 2
+      }
+    }
+  },
+  "static_reduction": {
+    "size_reduction_percent": 31.37,
+    "session_reduction_percent": 38.14
+  },
+  "adaptive_reduction": {
+    "size_reduction_percent": 26.9,
+    "session_reduction_percent": 32.82
+  }
 }
