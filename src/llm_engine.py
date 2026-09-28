@@ -167,13 +167,31 @@ class TreeIDSReasoningEngine:
         print(f"[+] Completed evaluation of {len(results)} session nodes. Audit log updated.")
         return results
 
+    @staticmethod
+    def _normalize_groq_model_name(model_name: str) -> str:
+        """Ensures Groq model strings contain their required vendor namespace."""
+        if not model_name:
+            return "qwen/qwen3.8-27b"
+        model_map = {
+            "qwen3.8-27b": "qwen/qwen3.8-27b",
+            "gpt-oss-20b": "openai/gpt-oss-20b",
+            "gpt-oss-120b": "openai/gpt-oss-120b",
+            "gpt-oss-safeguard-20b": "openai/gpt-oss-safeguard-20b",
+            "llama-prompt-guard-2-22m": "meta-llama/llama-prompt-guard-2-22m",
+            "llama-prompt-guard-2-86m": "meta-llama/llama-prompt-guard-2-86m",
+            "orpheus-v1-english": "canopylabs/orpheus-v1-english",
+        }
+        return model_map.get(model_name.strip(), model_name.strip())
+
     def _evaluate_node_with_fallback(self, session_node: dict, src_ip: str = "N/A") -> dict:
         """Silently attempts Primary -> Secondary -> Mock fallback behind the scenes."""
         prompt = self._build_prompt(session_node, src_ip)
         
         llm_cfg = self.config.get('llm', {})
-        primary = os.getenv("GROQ_PRIMARY_MODEL") or llm_cfg.get('primary_model', 'qwen/qwen3.8-27b')
-        secondary = os.getenv("GROQ_SECONDARY_MODEL") or llm_cfg.get('secondary_model', 'openai/gpt-oss-20b')
+        raw_primary = os.getenv("GROQ_PRIMARY_MODEL") or llm_cfg.get('primary_model', 'qwen/qwen3.8-27b')
+        raw_secondary = os.getenv("GROQ_SECONDARY_MODEL") or llm_cfg.get('secondary_model', 'openai/gpt-oss-20b')
+        primary = self._normalize_groq_model_name(raw_primary)
+        secondary = self._normalize_groq_model_name(raw_secondary)
         use_mock = llm_cfg.get('fallback_to_mock', True)
         temp = llm_cfg.get('temperature', 0.1)
 
