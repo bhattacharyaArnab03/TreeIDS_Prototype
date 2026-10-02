@@ -1,172 +1,172 @@
 [
     {
-        "source_ip": "192.168.10.12",
-        "session": "128.32.203.137:80",
+        "source_ip": "172.16.0.1",
+        "session": "192.168.10.14:8080",
         "classification": "BENIGN",
-        "confidence": 0.98,
-        "threat_type": "Normal Network Communication",
+        "confidence": 0.92,
+        "threat_type": "Normal Benign Communication",
         "mitre_attack": {
             "tactic": "N/A",
             "technique_id": "N/A",
             "technique_name": "N/A"
         },
         "reasoning_path": [
-            "Root -> Inspected Host [192.168.10.12] with 64 flows"
+            "Root -> Inspected Host [172.16.0.1] with 580 flows"
         ],
         "explanation": "N/A",
-        "recommended_mitigation": "No action required. Maintain baseline logging."
+        "recommended_mitigation": "No immediate action required. Continue monitoring for anomalous increases in packet count or connection frequency from this source IP. Ensure baseline logging is enabled for port 8080 to detect future deviations."
+    },
+    {
+        "source_ip": "172.16.0.1",
+        "session": "192.168.10.50:80",
+        "classification": "BENIGN",
+        "confidence": 0.92,
+        "threat_type": "Normal Benign Communication",
+        "mitre_attack": {
+            "tactic": "N/A",
+            "technique_id": "N/A",
+            "technique_name": "N/A"
+        },
+        "reasoning_path": [
+            "Root -> Inspected Host [172.16.0.1] with 580 flows"
+        ],
+        "explanation": "N/A",
+        "recommended_mitigation": "No immediate action required. Continue monitoring for deviations in flow count or packet rate. Ensure WAF rules are active for port 80 to detect potential web application attacks (e.g., SQLi, XSS) which are not visible in this low-level telemetry."
     },
     {
         "source_ip": "192.168.10.12",
-        "session": "148.251.76.202:80",
+        "session": "104.97.127.199:443",
         "classification": "BENIGN",
-        "confidence": 0.98,
-        "threat_type": "Normal Network Communication",
+        "confidence": 0.92,
+        "threat_type": "Normal HTTPS Communication",
         "mitre_attack": {
             "tactic": "N/A",
             "technique_id": "N/A",
             "technique_name": "N/A"
         },
         "reasoning_path": [
-            "Root -> Inspected Host [192.168.10.12] with 64 flows"
+            "Root -> Inspected Host [192.168.10.12] with 39 flows"
         ],
         "explanation": "N/A",
-        "recommended_mitigation": "No action required. Maintain baseline logging."
+        "recommended_mitigation": "No immediate action required. Continue standard monitoring. Ensure WAF rules are active for the target domain to protect against potential web application attacks if traffic volume increases."
     },
     {
         "source_ip": "192.168.10.12",
-        "session": "151.101.0.166:443",
+        "session": "121.78.124.168:80",
         "classification": "BENIGN",
-        "confidence": 0.98,
-        "threat_type": "Normal Network Communication",
+        "confidence": 0.92,
+        "threat_type": "Normal HTTP Communication",
         "mitre_attack": {
             "tactic": "N/A",
             "technique_id": "N/A",
             "technique_name": "N/A"
         },
         "reasoning_path": [
-            "Root -> Inspected Host [192.168.10.12] with 64 flows"
+            "Root -> Inspected Host [192.168.10.12] with 39 flows"
         ],
         "explanation": "N/A",
-        "recommended_mitigation": "No action required. Maintain baseline logging."
+        "recommended_mitigation": "No immediate action required. Continue monitoring for deviations in packet volume or flow duration from this source IP. Ensure web server logs correlate with this session to confirm legitimate user activity."
     },
     {
         "source_ip": "192.168.10.12",
-        "session": "151.101.20.166:443",
+        "session": "14.0.67.88:80",
         "classification": "BENIGN",
-        "confidence": 0.98,
-        "threat_type": "Normal Network Communication",
+        "confidence": 0.92,
+        "threat_type": "Normal HTTP Communication",
         "mitre_attack": {
             "tactic": "N/A",
             "technique_id": "N/A",
             "technique_name": "N/A"
         },
         "reasoning_path": [
-            "Root -> Inspected Host [192.168.10.12] with 64 flows"
+            "Root -> Inspected Host [192.168.10.12] with 39 flows"
         ],
         "explanation": "N/A",
-        "recommended_mitigation": "No action required. Maintain baseline logging."
+        "recommended_mitigation": "No immediate action required. Continue monitoring for anomalies in subsequent sessions from this host. Ensure web filtering and IDS signatures are up-to-date to detect potential web-based attacks if traffic patterns change."
     },
     {
         "source_ip": "192.168.10.12",
-        "session": "151.101.208.166:443",
+        "session": "158.255.65.22:80",
         "classification": "BENIGN",
-        "confidence": 0.98,
-        "threat_type": "Normal Network Communication",
+        "confidence": 0.92,
+        "threat_type": "Normal HTTP Communication",
         "mitre_attack": {
             "tactic": "N/A",
             "technique_id": "N/A",
             "technique_name": "N/A"
         },
         "reasoning_path": [
-            "Root -> Inspected Host [192.168.10.12] with 64 flows"
+            "Root -> Inspected Host [192.168.10.12] with 39 flows"
         ],
         "explanation": "N/A",
-        "recommended_mitigation": "No action required. Maintain baseline logging."
+        "recommended_mitigation": "No immediate action required. Continue monitoring for anomalies in subsequent sessions from this host. Ensure web filtering and proxy logs are enabled for deeper inspection if suspicious content is suspected."
     },
     {
         "source_ip": "192.168.10.12",
-        "session": "152.2.133.52:123",
+        "session": "172.217.10.132:443",
         "classification": "BENIGN",
         "confidence": 0.98,
-        "threat_type": "Normal Network Communication",
+        "threat_type": "Normal HTTPS Communication",
         "mitre_attack": {
             "tactic": "N/A",
             "technique_id": "N/A",
             "technique_name": "N/A"
         },
         "reasoning_path": [
-            "Root -> Inspected Host [192.168.10.12] with 64 flows"
+            "Root -> Inspected Host [192.168.10.12] with 39 flows"
         ],
         "explanation": "N/A",
-        "recommended_mitigation": "No action required. Maintain baseline logging."
+        "recommended_mitigation": "No action required. Monitor for future anomalies from this source IP if it deviates from baseline web traffic patterns."
     },
     {
         "source_ip": "192.168.10.12",
-        "session": "172.217.10.225:443",
+        "session": "192.168.10.3:53",
         "classification": "BENIGN",
         "confidence": 0.98,
-        "threat_type": "Normal Network Communication",
+        "threat_type": "Normal DNS Query Traffic",
         "mitre_attack": {
             "tactic": "N/A",
             "technique_id": "N/A",
             "technique_name": "N/A"
         },
         "reasoning_path": [
-            "Root -> Inspected Host [192.168.10.12] with 64 flows"
+            "Root -> Inspected Host [192.168.10.12] with 39 flows"
         ],
         "explanation": "N/A",
-        "recommended_mitigation": "No action required. Maintain baseline logging."
+        "recommended_mitigation": "No action required. Continue standard monitoring. Ensure DNS logs are retained for forensic correlation if other anomalies occur on this host."
     },
     {
         "source_ip": "192.168.10.12",
-        "session": "172.217.12.142:443",
+        "session": "192.168.10.50:21",
         "classification": "BENIGN",
-        "confidence": 0.98,
-        "threat_type": "Normal Network Communication",
+        "confidence": 0.92,
+        "threat_type": "Normal FTP Communication",
         "mitre_attack": {
             "tactic": "N/A",
             "technique_id": "N/A",
             "technique_name": "N/A"
         },
         "reasoning_path": [
-            "Root -> Inspected Host [192.168.10.12] with 64 flows"
+            "Root -> Inspected Host [192.168.10.12] with 39 flows"
         ],
         "explanation": "N/A",
-        "recommended_mitigation": "No action required. Maintain baseline logging."
+        "recommended_mitigation": "No immediate action required. Monitor for subsequent data transfer volume or authentication failures on this host pair. Ensure FTP is encrypted (FTPS/SFTP) if sensitive data is being transferred."
     },
     {
         "source_ip": "192.168.10.12",
-        "session": "172.217.12.194:443",
+        "session": "192.229.163.97:443",
         "classification": "BENIGN",
-        "confidence": 0.98,
-        "threat_type": "Normal Network Communication",
+        "confidence": 0.92,
+        "threat_type": "Normal HTTPS Communication",
         "mitre_attack": {
             "tactic": "N/A",
             "technique_id": "N/A",
             "technique_name": "N/A"
         },
         "reasoning_path": [
-            "Root -> Inspected Host [192.168.10.12] with 64 flows"
+            "Root -> Inspected Host [192.168.10.12] with 39 flows"
         ],
         "explanation": "N/A",
-        "recommended_mitigation": "No action required. Maintain baseline logging."
-    },
-    {
-        "source_ip": "192.168.10.12",
-        "session": "172.217.12.206:80",
-        "classification": "BENIGN",
-        "confidence": 0.98,
-        "threat_type": "Normal Network Communication",
-        "mitre_attack": {
-            "tactic": "N/A",
-            "technique_id": "N/A",
-            "technique_name": "N/A"
-        },
-        "reasoning_path": [
-            "Root -> Inspected Host [192.168.10.12] with 64 flows"
-        ],
-        "explanation": "N/A",
-        "recommended_mitigation": "No action required. Maintain baseline logging."
+        "recommended_mitigation": "No immediate action required. Continue monitoring for anomalies in subsequent sessions from this source IP. Ensure WAF rules are active for port 443 to detect potential web application attacks if traffic volume increases."
     }
 ]

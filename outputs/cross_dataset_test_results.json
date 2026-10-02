@@ -1,0 +1,177 @@
+[
+  {
+    "dataset": "Monday",
+    "rows_processed": 1000,
+    "hosts": 174,
+    "sessions_evaluated": 10,
+    "ground_truth_labels_isolated": true,
+    "label_classes": [
+      "BENIGN"
+    ],
+    "verdicts": {
+      "BENIGN": 10,
+      "SUSPICIOUS": 0,
+      "MALICIOUS": 0
+    },
+    "status": "passed"
+  },
+  {
+    "dataset": "Tuesday",
+    "rows_processed": 1000,
+    "hosts": 160,
+    "sessions_evaluated": 10,
+    "ground_truth_labels_isolated": true,
+    "label_classes": [
+      "BENIGN",
+      "FTP-Patator",
+      "SSH-Patator"
+    ],
+    "verdicts": {
+      "BENIGN": 9,
+      "SUSPICIOUS": 1,
+      "MALICIOUS": 0
+    },
+    "status": "passed"
+  },
+  {
+    "dataset": "Wednesday",
+    "rows_processed": 1000,
+    "hosts": 101,
+    "sessions_evaluated": 10,
+    "ground_truth_labels_isolated": true,
+    "label_classes": [
+      "BENIGN",
+      "DoS GoldenEye",
+      "DoS Hulk",
+      "DoS Slowhttptest",
+      "DoS slowloris"
+    ],
+    "verdicts": {
+      "BENIGN": 9,
+      "SUSPICIOUS": 0,
+      "MALICIOUS": 1
+    },
+    "status": "passed"
+  },
+  {
+    "dataset": "Thursday_WebAttacks",
+    "rows_processed": 1000,
+    "hosts": 74,
+    "sessions_evaluated": 10,
+    "ground_truth_labels_isolated": true,
+    "label_classes": [
+      "BENIGN",
+      "Web Attack \ufffd Brute Force",
+      "Web Attack \ufffd XSS"
+    ],
+    "verdicts": {
+      "BENIGN": 10,
+      "SUSPICIOUS": 0,
+      "MALICIOUS": 0
+    },
+    "status": "passed"
+  },
+  {
+    "dataset": "Thursday_Infiltration",
+    "rows_processed": 1000,
+    "hosts": 141,
+    "sessions_evaluated": 10,
+    "ground_truth_labels_isolated": true,
+    "label_classes": [
+      "BENIGN"
+    ],
+    "verdicts": {
+      "BENIGN": 10,
+      "SUSPICIOUS": 0,
+      "MALICIOUS": 0
+    },
+    "status": "passed"
+  },
+  {
+    "dataset": "Thursday_Combined",
+    "rows_processed": 1000,
+    "hosts": 115,
+    "sessions_evaluated": 10,
+    "ground_truth_labels_isolated": true,
+    "label_classes": [
+      "BENIGN",
+      "Web Attack \ufffd Brute Force"
+    ],
+    "verdicts": {
+      "BENIGN": 10,
+      "SUSPICIOUS": 0,
+      "MALICIOUS": 0
+    },
+    "status": "passed"
+  },
+  {
+    "dataset": "Friday_Botnet",
+    "rows_processed": 1000,
+    "hosts": 168,
+    "sessions_evaluated": 10,
+    "ground_truth_labels_isolated": true,
+    "label_classes": [
+      "BENIGN",
+      "Bot"
+    ],
+    "verdicts": {
+      "BENIGN": 10,
+      "SUSPICIOUS": 0,
+      "MALICIOUS": 0
+    },
+    "status": "passed"
+  },
+  {
+    "dataset": "Friday_PortScan",
+    "rows_processed": 1000,
+    "hosts": 68,
+    "sessions_evaluated": 10,
+    "ground_truth_labels_isolated": true,
+    "label_classes": [
+      "BENIGN",
+      "PortScan"
+    ],
+    "verdicts": {
+      "BENIGN": 10,
+      "SUSPICIOUS": 0,
+      "MALICIOUS": 0
+    },
+    "status": "passed"
+  },
+  {
+    "dataset": "Friday_DDoS",
+    "rows_processed": 1000,
+    "hosts": 56,
+    "sessions_evaluated": 10,
+    "ground_truth_labels_isolated": true,
+    "label_classes": [
+      "BENIGN",
+      "DDoS"
+    ],
+    "verdicts": {
+      "BENIGN": 9,
+      "SUSPICIOUS": 0,
+      "MALICIOUS": 1
+    },
+    "status": "passed"
+  },
+  {
+    "dataset": "Friday_Combined",
+    "rows_processed": 999,
+    "hosts": 97,
+    "sessions_evaluated": 10,
+    "ground_truth_labels_isolated": true,
+    "label_classes": [
+      "BENIGN",
+      "Bot",
+      "DDoS",
+      "PortScan"
+    ],
+    "verdicts": {
+      "BENIGN": 10,
+      "SUSPICIOUS": 0,
+      "MALICIOUS": 0
+    },
+    "status": "passed"
+  }
+]

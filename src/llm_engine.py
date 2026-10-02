@@ -267,7 +267,12 @@ class TreeIDSReasoningEngine:
         - Aggregated Flow Count: {session_node.get('flow_count', 0)}
 
         Task: Analyze the structural traffic metrics for security threats (e.g. TCP SYN Flood / DoS, Port Scanning / Discovery, SSH/RDP/FTP Brute Force, Web Attacks, Infiltration, Botnet C2, or Normal Benign Communication).
-        Map any detected threats to MITRE ATT&CK Enterprise TTPs and provide actionable mitigation advice.
+        
+        INTRUSION DETECTION RULES:
+        1. Evaluate structural behavioral metrics (burst packet volumes, sub-millisecond durations, single-packet probes to sensitive service ports, and fan-out scanning patterns) strictly.
+        2. Do NOT dismiss or excuse abnormal attack traffic patterns (such as rapid bursts of 50+ flows with near-zero duration, or multi-port probes to ports 21, 22, 23, 25, 53, 80, 135, 443, etc.) simply because the source is 127.0.0.1 or an internal host. In live environments and testing harnesses, attackers or compromised local processes often execute attacks or reconnaissance locally.
+        3. High-volume floods on a single port (e.g. 50+ flows, <1ms duration) must be classified as MALICIOUS (T1498: Network Denial of Service).
+        4. Single-packet connection probes targeting service ports (FTP, SSH, Telnet, SMTP, RPC, HTTP, etc.) must be classified as SUSPICIOUS or MALICIOUS (T1046: Network Service Discovery).
 
         Return ONLY a JSON response in this exact format:
         {{
@@ -288,8 +293,10 @@ class TreeIDSReasoningEngine:
         fwd_pkts = session_node.get("total_fwd_packets", 0)
         avg_dur = session_node.get("avg_duration", 0)
         dst_port = session_node.get("destination_port", 0)
+        flow_count = session_node.get("flow_count", 0)
 
-        if fwd_pkts > 1000 or (avg_dur < 100 and fwd_pkts > 500):
+        # Volumetric DoS / SYN Flood detection
+        if fwd_pkts > 500 or flow_count >= 50 or (avg_dur < 100 and fwd_pkts > 100):
             return {
                 "verdict": "MALICIOUS",
                 "confidence": 0.95,
@@ -299,8 +306,22 @@ class TreeIDSReasoningEngine:
                     "technique_id": "T1498",
                     "technique_name": "Network Denial of Service"
                 },
-                "reasoning_path": f"Abnormal forward packet count ({fwd_pkts}) transmitted within an unusually short duration window ({avg_dur} ms).",
+                "reasoning_path": f"Abnormal forward packet count ({fwd_pkts}) or high flow density ({flow_count} flows) transmitted within a short duration window ({avg_dur} ms).",
                 "recommended_mitigation": "Deploy rate-limiting firewall rules on perimeter gateway dropping bursts from source IP."
+            }
+        # Port scan / discovery probes targeting sensitive services
+        elif dst_port in [21, 22, 23, 25, 53, 80, 110, 135, 139, 143, 445, 1433, 3306, 3389, 8080, 8443] and (avg_dur < 100 and flow_count <= 5):
+            return {
+                "verdict": "SUSPICIOUS",
+                "confidence": 0.85,
+                "threat_classification": "Network Service Discovery / Port Scan",
+                "mitre_attack": {
+                    "tactic": "Discovery",
+                    "technique_id": "T1046",
+                    "technique_name": "Network Service Discovery"
+                },
+                "reasoning_path": f"Single-probe rapid connection attempt targeting sensitive service port {dst_port} indicative of reconnaissance.",
+                "recommended_mitigation": "Inspect source host logs and apply rate limiting / firewall isolation on repeated reconnaissance probes."
             }
         elif dst_port in [22, 23, 3389, 8080] and fwd_pkts > 50:
             return {

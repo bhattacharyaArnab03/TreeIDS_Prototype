@@ -8,6 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+import pandas as pd
 import yaml
 
 from src.data_loader import DataLoader
@@ -28,6 +29,8 @@ def run_cross_dataset_test(config_path: str) -> list[dict]:
         loader = DataLoader(config)
         frame = loader.fetch_dataset()
         tree = TreeBuilder(config).build_tree(frame)
+        engine = TreeIDSReasoningEngine(config)
+        detections = engine.analyze_tree(tree, dataset_name)
         raw_labels = loader.last_ground_truth
         if raw_labels is not None:
             labels = raw_labels.astype(str).value_counts().to_dict()
